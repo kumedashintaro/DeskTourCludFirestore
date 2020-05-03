@@ -1,9 +1,11 @@
 package shintro.desktour
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : AppCompatActivity() {
@@ -16,6 +18,13 @@ class RegisterActivity : AppCompatActivity() {
             performRegister()
         }
 
+        selectophoto_button.setOnClickListener {
+            Log.d("RegisterActivity", "Try to show photo selector")
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 0)
+        }
     }
 
 
@@ -29,5 +38,17 @@ class RegisterActivity : AppCompatActivity() {
         }
         Log.d("RegisterActivity", "Email is: " + email)
         Log.d("RegisterActivity", "Password: $password")
+
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener{
+                if (!it.isSuccessful)return@addOnCompleteListener
+
+                Log.d("RegisterActivity", "Successfully created user with uid:${it.result?.user?.uid}")
+            }
+            .addOnFailureListener{
+                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+            }
+
     }
 }

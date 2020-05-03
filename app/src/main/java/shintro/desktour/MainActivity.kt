@@ -3,6 +3,8 @@ package shintro.desktour
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +21,11 @@ class MainActivity : AppCompatActivity() {
         register_button_main.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+        }
+
+        signout_button_main.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            Toast.makeText(this, "サインアウトしました。 ", Toast.LENGTH_LONG).show()
         }
     }
 }

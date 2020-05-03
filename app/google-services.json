@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "904742333418",
+    "firebase_url": "https://desk-tour.firebaseio.com",
+    "project_id": "desk-tour",
+    "storage_bucket": "desk-tour.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904742333418:android:320f8d4c0c6a9546746093",
+        "android_client_info": {
+          "package_name": "shintro.desktour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "904742333418-o8auo3f4um8n8v4e3u2a775fpj2520gt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUSVcUEELB_xmLS4_nuEm_QaY2TrMgfwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "904742333418-o8auo3f4um8n8v4e3u2a775fpj2520gt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
