@@ -40,6 +40,9 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-auth:19.1.0'
 
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-database:19.1.0'
+
     // Library
     implementation 'com.google.android.material:material:1.0.0'
 
