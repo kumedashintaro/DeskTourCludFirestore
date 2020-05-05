@@ -10,6 +10,8 @@ import shintro.desktour.Fragments.YouTube
 
 internal class PagerViewAdapter(fm: FragmentManager?): FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment?{
+
+
         return when(position){
             0 -> {
                 YouTube()
@@ -21,7 +23,10 @@ internal class PagerViewAdapter(fm: FragmentManager?): FragmentPagerAdapter(fm) 
                 Add()
             }
             3 -> {
-                Parson()
+
+
+                    Parson()
+
             }
 
             else -> null

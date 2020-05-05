@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mViewPager: ViewPager
     private lateinit var mPagerViewAdapter: PagerViewAdapter
 
+    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         mPagerViewAdapter = PagerViewAdapter(supportFragmentManager)
         mViewPager.adapter = mPagerViewAdapter
-        mViewPager.offscreenPageLimit = 1
+        mViewPager.offscreenPageLimit = 4
 
         // add page change listener
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -87,29 +89,29 @@ class MainActivity : AppCompatActivity() {
         if (position == 0) {
             youtubeBtn.setImageResource(R.drawable.ic_slideshow_palevioletred)
             homeBtn.setImageResource(R.drawable.ic_home_black)
-            parsonBtn.setImageResource(R.drawable.ic_add_box_black)
-            youtubeBtn.setImageResource(R.drawable.ic_person_outline_black)
+            addBtn.setImageResource(R.drawable.ic_add_box_black)
+            parsonBtn.setImageResource(R.drawable.ic_person_outline_black)
 
         }
         if (position == 1) {
             youtubeBtn.setImageResource(R.drawable.ic_slideshow_black)
             homeBtn.setImageResource(R.drawable.ic_home_palevioletred)
-            parsonBtn.setImageResource(R.drawable.ic_add_box_black)
-            youtubeBtn.setImageResource(R.drawable.ic_person_outline_black)
+            addBtn.setImageResource(R.drawable.ic_add_box_black)
+            parsonBtn.setImageResource(R.drawable.ic_person_outline_black)
 
         }
         if (position == 2) {
             youtubeBtn.setImageResource(R.drawable.ic_slideshow_black)
             homeBtn.setImageResource(R.drawable.ic_home_black)
-            parsonBtn.setImageResource(R.drawable.ic_add_box_palevioletred)
-            youtubeBtn.setImageResource(R.drawable.ic_person_outline_black)
+            addBtn.setImageResource(R.drawable.ic_add_box_palevioletred)
+            parsonBtn.setImageResource(R.drawable.ic_person_outline_black)
 
         }
         if (position == 3) {
             youtubeBtn.setImageResource(R.drawable.ic_slideshow_black)
             homeBtn.setImageResource(R.drawable.ic_home_black)
-            parsonBtn.setImageResource(R.drawable.ic_add_box_black)
-            youtubeBtn.setImageResource(R.drawable.ic_person_outline_palevioletred)
+            addBtn.setImageResource(R.drawable.ic_add_box_black)
+            parsonBtn.setImageResource(R.drawable.ic_person_outline_palevioletred)
         }
     }
 }
