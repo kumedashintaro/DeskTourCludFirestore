@@ -3,14 +3,13 @@ package shintro.desktour
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import shintro.desktour.Fragments.Add
-import shintro.desktour.Fragments.Home
-import shintro.desktour.Fragments.Parson
-import shintro.desktour.Fragments.YouTube
+import com.google.firebase.auth.FirebaseAuth
+import shintro.desktour.Fragments.*
 
 internal class PagerViewAdapter(fm: FragmentManager?): FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment?{
 
+        val user = FirebaseAuth.getInstance().currentUser
 
         return when(position){
             0 -> {
@@ -23,10 +22,10 @@ internal class PagerViewAdapter(fm: FragmentManager?): FragmentPagerAdapter(fm) 
                 Add()
             }
             3 -> {
-
-
-                    Parson()
-
+                if (user == null) { Parson()
+                }else{
+                    Login()
+                }
             }
 
             else -> null

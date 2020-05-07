@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_login.email_edittext_login
 import kotlinx.android.synthetic.main.activity_login.login_button
 import kotlinx.android.synthetic.main.activity_login.paswward_edittext_login
 import kotlinx.android.synthetic.main.fragment_parson.*
+import shintro.desktour.MainActivity
 
 import shintro.desktour.R
 import shintro.desktour.RegisterActivity
@@ -58,6 +59,8 @@ class Parson : Fragment() {
                         "LoginActivity",
                         "Successfully created user with uid:${it.result?.user?.uid}"
                     )
+                    val intent = Intent(activity, MainActivity::class.java)
+                    startActivity(intent)
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity, "ログインに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
