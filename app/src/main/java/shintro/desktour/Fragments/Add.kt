@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 
+
 import shintro.desktour.R
 
 /**
@@ -22,5 +23,4 @@ class Add : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add, container, false)
     }
-
-    }
+}

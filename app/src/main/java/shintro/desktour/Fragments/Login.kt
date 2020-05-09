@@ -59,7 +59,6 @@ class Login : Fragment() {
             val intent = Intent(activity, MainActivity::class.java)
             startActivity(intent)
 
-
         }
     }
 }

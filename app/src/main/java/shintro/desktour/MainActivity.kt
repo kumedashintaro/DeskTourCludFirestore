@@ -1,14 +1,19 @@
 package shintro.desktour
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.ImageButton
 
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_register.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mViewPager: ViewPager
     private lateinit var mPagerViewAdapter: PagerViewAdapter
 
-    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,5 +118,8 @@ class MainActivity : AppCompatActivity() {
             parsonBtn.setImageResource(R.drawable.ic_person_outline_palevioletred)
         }
     }
+
+
+
 }
 

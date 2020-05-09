@@ -12,10 +12,7 @@ import android.widget.Toast
 
 
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.email_edittext_login
-import kotlinx.android.synthetic.main.activity_login.login_button
-import kotlinx.android.synthetic.main.activity_login.paswward_edittext_login
+
 import kotlinx.android.synthetic.main.fragment_parson.*
 import shintro.desktour.MainActivity
 
