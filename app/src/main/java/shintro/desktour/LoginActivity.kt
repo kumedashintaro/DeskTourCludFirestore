@@ -1,42 +1,58 @@
 package shintro.desktour
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.widget.ImageButton
-
 import android.widget.Toast
-import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_register.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_login.*
 
-class MainActivity : AppCompatActivity() {
 
+class LoginActivity : AppCompatActivity() {
     private lateinit var youtubeBtn: ImageButton
     private lateinit var homeBtn: ImageButton
     private lateinit var parsonBtn: ImageButton
     private lateinit var addBtn: ImageButton
-    val user = FirebaseAuth.getInstance().currentUser
 
+    val user = FirebaseAuth.getInstance().currentUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
         bottomselct()
 
+        val user = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$user")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val post = dataSnapshot.getValue(User::class.java)
+
+                username_rogin_edittext.setText(post?.username)
+                Picasso.get().load(post?.profileImageUrl).into(selectphoto_imageview)
+
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+
+        sign_out_button.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+
+        }
     }
-
-
-
-
-
-
 
 
 
@@ -73,7 +89,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
         parsonBtn.setOnClickListener {
             if(user == null){
                 val intent = Intent(this, NotLoginActivity::class.java)
@@ -85,4 +100,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-

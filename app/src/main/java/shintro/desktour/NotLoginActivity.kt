@@ -1,50 +1,65 @@
 package shintro.desktour
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageButton
-
 import android.widget.Toast
-import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.activity_not_login.*
 
-class MainActivity : AppCompatActivity() {
 
+class NotLoginActivity : AppCompatActivity() {
     private lateinit var youtubeBtn: ImageButton
     private lateinit var homeBtn: ImageButton
     private lateinit var parsonBtn: ImageButton
     private lateinit var addBtn: ImageButton
     val user = FirebaseAuth.getInstance().currentUser
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_not_login)
 
         bottomselct()
 
+        login_button.setOnClickListener {
+
+            val email = email_edittext_login.text.toString()
+            val password = paswward_edittext_login.text.toString()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "E-mail 又は Password を入力して下さい ", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            Log.d("LoginActivity", "Email is: " + email)
+            Log.d("LoginActivity", "Password: $password")
+
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (!it.isSuccessful) return@addOnCompleteListener
+
+                    Log.d(
+                        "LoginActivity",
+                        "Successfully created user with uid:${it.result?.user?.uid}"
+                    )
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "ログインに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+                    Log.d("LoginActivity", "Failed to create user: ${it.message}")
+                }
+        }
+
+
+        regsiter_text_view.setOnClickListener {
+
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private fun bottomselct(){
 
@@ -85,4 +100,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
