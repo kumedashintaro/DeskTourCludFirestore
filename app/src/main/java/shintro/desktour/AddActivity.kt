@@ -106,9 +106,11 @@ class AddActivity : AppCompatActivity() {
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/desk/$uid")
+       // val ref = FirebaseDatabase.getInstance().getReference("/desk/$uid")
 
-        val desk = Desk(uid, add_comment_edittext.text.toString(), profileImageUrl)
+        val ref = FirebaseDatabase.getInstance().getReference("/desk").push()
+
+        val desk = Desk(uid,add_comment_edittext.text.toString(), profileImageUrl)
 
         ref.setValue(desk)
             .addOnSuccessListener {
@@ -163,7 +165,7 @@ class AddActivity : AppCompatActivity() {
 }
 
 class Desk(val uid: String, val comment: String, val profileImageUrl: String) {
-    constructor() : this("", "", "")
+    constructor() : this("", "","")
 
 }
 
