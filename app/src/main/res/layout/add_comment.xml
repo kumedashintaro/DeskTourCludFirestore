@@ -8,7 +8,7 @@
 
 
     <EditText
-        android:id="@+id/add_comment__edittext"
+        android:id="@+id/add_comment_edittext"
         android:layout_width="0dp"
         android:layout_height="300dp"
         android:layout_marginStart="32dp"
@@ -29,7 +29,7 @@
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_comment__edittext" />
+        app:layout_constraintTop_toBottomOf="@+id/add_comment_edittext" />
 
     <TextView
         android:id="@+id/textView2"

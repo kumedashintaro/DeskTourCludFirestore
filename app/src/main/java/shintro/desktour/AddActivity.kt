@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
@@ -13,8 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_register.*
-import kotlinx.android.synthetic.main.activity_register.selectphoto_imageview
 import kotlinx.android.synthetic.main.add_comment.*
 import kotlinx.android.synthetic.main.add_deskimage.*
 import java.util.*
@@ -72,7 +69,7 @@ class AddActivity : AppCompatActivity() {
     }
 
     private fun performRegister() {
-        val comment = add_comment__edittext.text.toString()
+        val comment = add_comment_edittext.text.toString()
 
         if (comment.isEmpty() || selectedPhotUri == null) {
             Toast.makeText(this, "写真の選択 又は コメント を入力して下さい ", Toast.LENGTH_LONG).show()
@@ -111,7 +108,7 @@ class AddActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/desk/$uid")
 
-        val desk = Desk(uid, add_comment__edittext.text.toString(), profileImageUrl)
+        val desk = Desk(uid, add_comment_edittext.text.toString(), profileImageUrl)
 
         ref.setValue(desk)
             .addOnSuccessListener {

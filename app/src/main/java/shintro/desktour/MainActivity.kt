@@ -1,19 +1,24 @@
 package shintro.desktour
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageButton
 
 import android.widget.Toast
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.desk_view.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,20 +35,43 @@ class MainActivity : AppCompatActivity() {
 
         bottomselct()
 
+        val adapter = GroupAdapter<ViewHolder>()
+
+        //adapter.add(DeskItem())
+
+
+        recyclerview_desk.adapter = adapter
+        recyclerview_desk.layoutManager = LinearLayoutManager(this)
+
+        fetchDesk()
+
     }
 
+    private fun fetchDesk(){
+        val ref = FirebaseDatabase.getInstance().getReference("/desk")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val adapter = GroupAdapter<ViewHolder>()
 
 
+                p0.children.forEach{
+                    Log.d("MainActivity", it.toString())
+                    val desk = it.getValue(Desk::class.java)
+                    if (desk != null){
+                        adapter.add(DeskItem(desk))
+                    }
 
+                }
 
+                recyclerview_desk.adapter = adapter
 
+            }
 
-
-
-
-
-
-
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+    }
 
 
     private fun bottomselct(){
@@ -83,6 +111,18 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+}
+
+class DeskItem(val desk: Desk): Item<ViewHolder>(){
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.itemView.desk_comment.text = desk.comment
+        Picasso.get().load(desk.profileImageUrl).into(viewHolder.itemView.desk_image)
+
+    }
+
+    override fun getLayout(): Int {
+        return R.layout.desk_view
     }
 }
 
