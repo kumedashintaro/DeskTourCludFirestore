@@ -39,12 +39,10 @@ class MainActivity : AppCompatActivity() {
 
         //adapter.add(DeskItem())
 
-
         recyclerview_desk.adapter = adapter
         recyclerview_desk.layoutManager = LinearLayoutManager(this)
 
         fetchDesk()
-
     }
 
 
@@ -57,6 +55,8 @@ class MainActivity : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+
+
                 val adapter = GroupAdapter<ViewHolder>()
 
                 p0.children.forEach{
@@ -69,11 +69,14 @@ class MainActivity : AppCompatActivity() {
 
                 adapter.setOnItemClickListener{item, view ->
 
+
                     val deskItem = item as DeskItem
 
                     val intent = Intent(view.context,DetailDeskActivity::class.java)
  //                  intent.putExtra(DESK_KEY, deskItem.desk.uid)
                     intent.putExtra(DESK_KEY,deskItem.desk)
+
+
                     startActivity(intent)
                 }
 

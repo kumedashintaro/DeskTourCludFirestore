@@ -1,14 +1,24 @@
 package shintro.desktour
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_detail_desk.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.derail_desk_user.*
+import kotlinx.android.synthetic.main.desk_view.view.*
+import kotlinx.android.synthetic.main.detail_desk_comment.view.*
 import kotlinx.android.synthetic.main.detail_desk_image_comment.*
 
 
@@ -21,26 +31,31 @@ class DetailDeskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_desk)
 
         toDesk = intent.getParcelableExtra<Desk>(MainActivity.DESK_KEY)
-        Log.d("DetailActivity", "key: " + toDesk)
+        Log.d("DetailDeskActivity", "key: " + toDesk)
 
         profileset()
         commentset()
 
 
+        val adapter = GroupAdapter<ViewHolder>()
+        recyclerview_detail_desk.adapter = adapter
+        recyclerview_detail_desk.layoutManager = LinearLayoutManager(this)
+        fetchDesk()
 
 
+
+
+        send_button.setOnClickListener {
+            saveCommentToFirebaseDatabase()
+        }
 
     }
 
+    private fun profileset() {
 
-
-
-
-    private fun profileset(){
-
-        val DeskUid = toDesk?.uid
-        Log.d("DetailActivity", "uid: " + DeskUid)
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$DeskUid")
+        val userUid = toDesk?.uid
+        Log.d("DetailDeskActivity", "uid: " + userUid)
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$userUid")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -58,7 +73,7 @@ class DetailDeskActivity : AppCompatActivity() {
 
     }
 
-    private fun commentset(){
+    private fun commentset() {
         val DeskComment = toDesk?.comment
         val DeskImage = toDesk?.profileImageUrl
         Log.d("DetailActivity", "comment: " + DeskComment)
@@ -70,4 +85,108 @@ class DetailDeskActivity : AppCompatActivity() {
 
 
 
+
+
+    private fun fetchDesk(){
+        val DeskUid = toDesk?.deskuid
+
+        val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+
+            override fun onDataChange(p0: DataSnapshot) {
+
+
+                val adapter = GroupAdapter<ViewHolder>()
+
+                p0.children.forEach{
+                    Log.d("MainActivity", it.toString())
+                    val detaildesk = it.getValue(DetailDesk::class.java)
+                    if (detaildesk != null){
+                        adapter.add(DetailDeskItem(detaildesk))
+                    }
+                }
+                recyclerview_detail_desk.adapter = adapter
+            }
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+    private fun saveCommentToFirebaseDatabase() {
+
+        val user = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$user")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val sendcomment = send_comment.text.toString()
+
+                if (sendcomment.isEmpty()) {
+                    return
+                }
+
+
+                // Get Post object and use the values to update the UI
+                val post = dataSnapshot.getValue(User::class.java)
+
+                val username = post?.username
+                val profileImageUrl = post?.profileImageUrl
+
+                val DeskUid = toDesk?.deskuid
+                val uid = FirebaseAuth.getInstance().uid ?: ""
+                val refDesk =
+                    FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid").push()
+
+                val detaildesk = DetailDesk(uid, sendcomment, username!!, profileImageUrl!!)
+
+                refDesk.setValue(detaildesk)
+                    .addOnSuccessListener {
+                        Log.d("DetailDeskActivity", "Finally we saved comment to Firebase Database")
+                    }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+
+
+    }
+}
+
+class DetailDeskItem(val detaildesk: DetailDesk): Item<ViewHolder>(){
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+
+        viewHolder.itemView.detail_desk_comment_textview.text = detaildesk.deskdetailcommnt
+        viewHolder.itemView.detail_desl_comment_username.text = detaildesk.username
+        Picasso.get().load(detaildesk.profileImageUrl).into(viewHolder.itemView.user_imageview_detail_desk_comment)
+
+    }
+
+    override fun getLayout(): Int {
+        return R.layout.detail_desk_comment
+    }
+}
+
+
+
+
+
+class DetailDesk(
+    val uid: String,
+    val deskdetailcommnt: String,
+    val username: String,
+    val profileImageUrl: String
+) {
+    constructor() : this("", "", "", "")
 }

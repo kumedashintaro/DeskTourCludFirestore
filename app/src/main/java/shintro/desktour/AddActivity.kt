@@ -96,7 +96,6 @@ class AddActivity : AppCompatActivity() {
                     Log.d("AddActivity", "File Location: $it")
 
                     saveUserToFirebaseDatabase(it.toString())
-
                 }
             }
             .addOnFailureListener {
@@ -105,12 +104,15 @@ class AddActivity : AppCompatActivity() {
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+        val deskuid = UUID.randomUUID().toString()
+
+
         val uid = FirebaseAuth.getInstance().uid ?: ""
        // val ref = FirebaseDatabase.getInstance().getReference("/desk/$uid")
 
         val ref = FirebaseDatabase.getInstance().getReference("/desk").push()
 
-        val desk = Desk(uid,add_comment_edittext.text.toString(), profileImageUrl)
+        val desk = Desk(uid,add_comment_edittext.text.toString(), profileImageUrl,deskuid)
 
         ref.setValue(desk)
             .addOnSuccessListener {
