@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -45,6 +46,11 @@ class DetailDeskActivity : AppCompatActivity() {
         fetchDesk()
 
         send_button.setOnClickListener {
+            val user = FirebaseAuth.getInstance().uid
+            if(user == null){
+                Toast.makeText(this, "コメントするにはログインが必要です。", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             saveCommentToFirebaseDatabase()
         }
     }

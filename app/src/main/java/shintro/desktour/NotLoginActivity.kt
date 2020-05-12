@@ -64,15 +64,15 @@ class NotLoginActivity : AppCompatActivity() {
     private fun bottomselct(){
 
         // init image buttons
-        youtubeBtn = findViewById(R.id.youtubeBtn)
+//        youtubeBtn = findViewById(R.id.youtubeBtn)
         homeBtn = findViewById(R.id.homeBtn)
         addBtn = findViewById(R.id.addBtn)
         parsonBtn = findViewById(R.id.parsonBtn)
 
         //onclick listner
-        youtubeBtn.setOnClickListener {
+//        youtubeBtn.setOnClickListener {
 
-        }
+//        }
 
         homeBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
