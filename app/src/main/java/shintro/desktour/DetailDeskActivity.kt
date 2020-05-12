@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -24,6 +21,8 @@ import kotlinx.android.synthetic.main.detail_desk_image_comment.*
 
 class DetailDeskActivity : AppCompatActivity() {
 
+    val adapter = GroupAdapter<ViewHolder>()
+
     var toDesk: Desk? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +36,17 @@ class DetailDeskActivity : AppCompatActivity() {
         commentset()
 
 
+        listenForMessages()
+
+
         val adapter = GroupAdapter<ViewHolder>()
         recyclerview_detail_desk.adapter = adapter
         recyclerview_detail_desk.layoutManager = LinearLayoutManager(this)
         fetchDesk()
 
-
-
-
         send_button.setOnClickListener {
             saveCommentToFirebaseDatabase()
         }
-
     }
 
     private fun profileset() {
@@ -83,21 +81,12 @@ class DetailDeskActivity : AppCompatActivity() {
 
     }
 
-
-
-
-
     private fun fetchDesk(){
         val DeskUid = toDesk?.deskuid
-
         val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-
-
-                val adapter = GroupAdapter<ViewHolder>()
-
                 p0.children.forEach{
                     Log.d("MainActivity", it.toString())
                     val detaildesk = it.getValue(DetailDesk::class.java)
@@ -113,6 +102,35 @@ class DetailDeskActivity : AppCompatActivity() {
     }
 
 
+
+    val latestMessageMap = HashMap<String, DetailDesk>()
+
+        private fun listenForMessages(){
+            val DeskUid = toDesk?.deskuid
+            val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
+            ref.addChildEventListener(object: ChildEventListener {
+                override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                    val chatMessage = p0.getValue(DetailDesk::class.java) ?: return
+                    latestMessageMap[p0.key!!] = chatMessage
+                    //refreshRecyclerViewMessages()
+
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+                }
+                override fun onChildRemoved(p0: DataSnapshot) {
+
+                }
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
+        }
 
 
 
@@ -152,14 +170,15 @@ class DetailDeskActivity : AppCompatActivity() {
 
                 refDesk.setValue(detaildesk)
                     .addOnSuccessListener {
+                        send_comment.text.clear()
                         Log.d("DetailDeskActivity", "Finally we saved comment to Firebase Database")
+                        fetchDesk()
+                        recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
                     }
             }
-
             override fun onCancelled(p0: DatabaseError) {
             }
         })
-
 
     }
 }
@@ -177,10 +196,6 @@ class DetailDeskItem(val detaildesk: DetailDesk): Item<ViewHolder>(){
         return R.layout.detail_desk_comment
     }
 }
-
-
-
-
 
 class DetailDesk(
     val uid: String,
