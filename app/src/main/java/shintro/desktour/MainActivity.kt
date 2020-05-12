@@ -47,6 +47,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    companion object{
+        val DESK_KEY = "DESK_KEY"
+    }
+
     private fun fetchDesk(){
         val ref = FirebaseDatabase.getInstance().getReference("/desk")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
@@ -54,18 +59,25 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(p0: DataSnapshot) {
                 val adapter = GroupAdapter<ViewHolder>()
 
-
                 p0.children.forEach{
                     Log.d("MainActivity", it.toString())
                     val desk = it.getValue(Desk::class.java)
                     if (desk != null){
                         adapter.add(DeskItem(desk))
                     }
+                }
 
+                adapter.setOnItemClickListener{item, view ->
+
+                    val deskItem = item as DeskItem
+
+                    val intent = Intent(view.context,DetailDeskActivity::class.java)
+ //                  intent.putExtra(DESK_KEY, deskItem.desk.uid)
+                    intent.putExtra(DESK_KEY,deskItem.desk)
+                    startActivity(intent)
                 }
 
                 recyclerview_desk.adapter = adapter
-
             }
 
             override fun onCancelled(p0: DatabaseError) {

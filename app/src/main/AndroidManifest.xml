@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NotLoginActivity"></activity>
+        <activity android:name=".DetailDeskActivity"></activity>
+        <activity android:name=".NotLoginActivity" />
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".AddActivity"

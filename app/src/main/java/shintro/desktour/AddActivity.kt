@@ -164,9 +164,9 @@ class AddActivity : AppCompatActivity() {
 
 }
 
-class Desk(val uid: String, val comment: String, val profileImageUrl: String) {
-    constructor() : this("", "","")
+//class Desk(val uid: String, val comment: String, val profileImageUrl: String) {
+//    constructor() : this("", "","")
 
-}
+//}
 
 
