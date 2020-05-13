@@ -54,14 +54,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-
-
-
-
-
-
-
     private fun bottomselct(){
 
         // init image buttons

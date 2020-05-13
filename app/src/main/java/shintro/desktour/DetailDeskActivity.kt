@@ -37,6 +37,7 @@ class DetailDeskActivity : AppCompatActivity() {
         commentset()
 
 
+
         listenForMessages()
 
 
@@ -80,12 +81,15 @@ class DetailDeskActivity : AppCompatActivity() {
     private fun commentset() {
         val DeskComment = toDesk?.comment
         val DeskImage = toDesk?.profileImageUrl
+        val DeskTitel = toDesk?.titel
         Log.d("DetailActivity", "comment: " + DeskComment)
 
         detail_desk_comment_textview.setText(DeskComment)
+        detail_desk_title_textview.setText(DeskTitel)
         Picasso.get().load(DeskImage).into(detail_desk_imageview)
 
     }
+
 
     private fun fetchDesk(){
         val DeskUid = toDesk?.deskuid

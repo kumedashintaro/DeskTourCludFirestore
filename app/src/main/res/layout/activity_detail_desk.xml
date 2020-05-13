@@ -35,6 +35,8 @@
         android:id="@+id/recyclerview_detail_desk"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:background="#20bc8f8f"
         app:layout_constraintBottom_toTopOf="@+id/send_comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,8 +46,10 @@
         android:id="@+id/send_comment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="4dp"
         android:ems="10"
         android:gravity="start|top"
+        android:hint="コメント"
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
@@ -54,9 +58,13 @@
 
     <Button
         android:id="@+id/send_button"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="50dp"
-        android:text="SEND"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_color_rosybrown"
+        android:text="送信"
+        android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
