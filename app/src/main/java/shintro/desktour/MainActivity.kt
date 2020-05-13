@@ -131,7 +131,10 @@ class MainActivity : AppCompatActivity() {
 
 class DeskItem(val desk: Desk): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
+
+        viewHolder.itemView.desk_title.text = desk.titel
         viewHolder.itemView.desk_comment.text = desk.comment
+
         Picasso.get().load(desk.profileImageUrl).into(viewHolder.itemView.desk_image)
 
     }

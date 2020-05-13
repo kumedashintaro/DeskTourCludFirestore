@@ -70,11 +70,13 @@ class AddActivity : AppCompatActivity() {
 
     private fun performRegister() {
         val comment = add_comment_edittext.text.toString()
+        val title = add_title_edittext.text.toString()
 
-        if (comment.isEmpty() || selectedPhotUri == null) {
-            Toast.makeText(this, "写真の選択 又は コメント を入力して下さい ", Toast.LENGTH_LONG).show()
+        if (comment.isEmpty() || title.isEmpty() || selectedPhotUri == null) {
+            Toast.makeText(this, "写真の選択 又は 入力漏れがあります。", Toast.LENGTH_LONG).show()
             return
         }
+        Log.d("AddActivity", "title: " + title)
         Log.d("AddActivity", "comment: " + comment)
         Log.d("AddActivity", "selectedPhotUri:" + selectedPhotUri)
 
@@ -112,7 +114,7 @@ class AddActivity : AppCompatActivity() {
 
         val ref = FirebaseDatabase.getInstance().getReference("/desk").push()
 
-        val desk = Desk(uid,add_comment_edittext.text.toString(), profileImageUrl,deskuid)
+        val desk = Desk(uid,add_title_edittext.text.toString(),add_comment_edittext.text.toString(), profileImageUrl,deskuid)
 
         ref.setValue(desk)
             .addOnSuccessListener {
