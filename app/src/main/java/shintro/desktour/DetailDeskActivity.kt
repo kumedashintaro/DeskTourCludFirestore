@@ -40,7 +40,6 @@ class DetailDeskActivity : AppCompatActivity() {
         commentset()
 
         listenForMessages()
-        fetchDesk()
 
         send_button.setOnClickListener {
             val user = FirebaseAuth.getInstance().uid
@@ -86,31 +85,6 @@ class DetailDeskActivity : AppCompatActivity() {
 
     }
 
-
-    private fun fetchDesk(){
-        val DeskUid = toDesk?.deskuid
-        val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
-
-            override fun onDataChange(p0: DataSnapshot) {
-                p0.children.forEach{
-                    Log.d("MainActivity", it.toString())
-                    val detaildesk = it.getValue(DetailDesk::class.java)
-                    if (detaildesk != null){
-                        adapter.add(DetailDeskItem(detaildesk))
-                    }
-                }
-                recyclerview_detail_desk.adapter = adapter
-            }
-            override fun onCancelled(p0: DatabaseError) {
-            }
-        })
-    }
-
-
-
-  //  val latestMessageMap = HashMap<String, DetailDesk>()
-
         private fun listenForMessages(){
             val DeskUid = toDesk?.deskuid
             val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
@@ -120,12 +94,10 @@ class DetailDeskActivity : AppCompatActivity() {
 
                     if(chatMessage != null) {
 
+                        adapter.add(DetailDeskItem(chatMessage))
                     }
-
-
-                    //latestMessageMap[p0.key!!] = chatMessage
-                    //refreshRecyclerViewMessages()
-
+                    recyclerview_detail_desk.adapter = adapter
+                    recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
                 }
 
                 override fun onChildChanged(p0: DataSnapshot, p1: String?) {
