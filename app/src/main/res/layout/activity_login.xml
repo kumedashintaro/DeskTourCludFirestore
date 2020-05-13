@@ -121,6 +121,7 @@ tools:context=".LoginActivity">
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Username"
+        app:layout_constraintEnd_toEndOf="@+id/username_rogin_edittext"
         app:layout_constraintStart_toStartOf="@+id/username_rogin_edittext"
         app:layout_constraintTop_toBottomOf="@+id/selectphoto_imageview" />
 

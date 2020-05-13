@@ -30,20 +30,16 @@ class DetailDeskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_desk)
 
+        //val adapter = GroupAdapter<ViewHolder>()
+        recyclerview_detail_desk.adapter = adapter
+        //recyclerview_detail_desk.layoutManager = LinearLayoutManager(this)
         toDesk = intent.getParcelableExtra<Desk>(MainActivity.DESK_KEY)
         Log.d("DetailDeskActivity", "key: " + toDesk)
 
         profileset()
         commentset()
 
-
-
         listenForMessages()
-
-
-        val adapter = GroupAdapter<ViewHolder>()
-        recyclerview_detail_desk.adapter = adapter
-        recyclerview_detail_desk.layoutManager = LinearLayoutManager(this)
         fetchDesk()
 
         send_button.setOnClickListener {
@@ -113,7 +109,7 @@ class DetailDeskActivity : AppCompatActivity() {
 
 
 
-    val latestMessageMap = HashMap<String, DetailDesk>()
+  //  val latestMessageMap = HashMap<String, DetailDesk>()
 
         private fun listenForMessages(){
             val DeskUid = toDesk?.deskuid
@@ -121,7 +117,13 @@ class DetailDeskActivity : AppCompatActivity() {
             ref.addChildEventListener(object: ChildEventListener {
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                     val chatMessage = p0.getValue(DetailDesk::class.java) ?: return
-                    latestMessageMap[p0.key!!] = chatMessage
+
+                    if(chatMessage != null) {
+
+                    }
+
+
+                    //latestMessageMap[p0.key!!] = chatMessage
                     //refreshRecyclerViewMessages()
 
                 }
@@ -141,14 +143,6 @@ class DetailDeskActivity : AppCompatActivity() {
                 }
             })
         }
-
-
-
-
-
-
-
-
 
     private fun saveCommentToFirebaseDatabase() {
 
@@ -182,7 +176,6 @@ class DetailDeskActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         send_comment.text.clear()
                         Log.d("DetailDeskActivity", "Finally we saved comment to Firebase Database")
-                        fetchDesk()
                         recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
                     }
             }
