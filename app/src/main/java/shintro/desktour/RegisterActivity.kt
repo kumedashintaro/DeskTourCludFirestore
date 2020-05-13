@@ -1,7 +1,9 @@
 package shintro.desktour
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +11,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -16,22 +20,22 @@ import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
+    private val MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+
+        selectophoto_button.setOnClickListener {
+            checkPermission()
+        }
+
         login_button_register.setOnClickListener {
             performRegister()
         }
 
-        selectophoto_button.setOnClickListener {
-            Log.d("RegisterActivity", "Try to show photo selector")
-
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
-        }
     }
 
     var selectedPhotUri : Uri? = null
@@ -119,8 +123,67 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+
+    private fun checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            myStorageEnable()
+        } else {
+            requestLocationPermission()
+        }
+    }
+
+    private fun requestLocationPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        ) {
+            //許可を求め、拒否されていた場合
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE
+            )
+        } else {
+            //まだ許可を求めていない
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE -> {
+                if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //許可された
+                    myStorageEnable()
+                } else {
+                    Toast.makeText(this, "画像を選択できません", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun myStorageEnable(){
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, 0)
+    }
+
 }
 
 class User(val uid: String, val username: String, val profileImageUrl: String){
    constructor() : this("","","")
 }
+
+
+

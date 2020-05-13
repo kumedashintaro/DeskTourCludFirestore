@@ -1,13 +1,17 @@
 package shintro.desktour
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -21,6 +25,11 @@ class AddActivity : AppCompatActivity() {
     private lateinit var homeBtn: ImageButton
     private lateinit var parsonBtn: ImageButton
     private lateinit var addBtn: ImageButton
+
+    companion object {
+        private val PERMISSIONS_REQUEST_CODE = 100
+    }
+
     val user = FirebaseAuth.getInstance().currentUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,24 +38,38 @@ class AddActivity : AppCompatActivity() {
 
         bottomselct()
 
-    }
-
-    override fun onStart() {
-        super.onStart()
         selectophoto_desk_button.setOnClickListener {
-            Log.d("AddActivity", "Try to show photo selector")
 
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // 許可されている
+                    myStorageEnable()
+                } else {
+                    // 許可されていないので許可ダイアログを表示する
+                    requestPermissions(
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        PERMISSIONS_REQUEST_CODE
+                    )
+                    return@setOnClickListener
+                }
+            } else {
+                myStorageEnable()
+            }
         }
-
 
         add_button.setOnClickListener {
             performRegister()
-        }
 
+        }
     }
+
+    private fun myStorageEnable(){
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, 0)
+    }
+
+
 
     var selectedPhotUri: Uri? = null
 
@@ -127,6 +150,7 @@ class AddActivity : AppCompatActivity() {
             }
     }
 
+
     private fun bottomselct(){
 
         // init image buttons
@@ -165,12 +189,4 @@ class AddActivity : AppCompatActivity() {
             }
         }
     }
-
 }
-
-//class Desk(val uid: String, val comment: String, val profileImageUrl: String) {
-//    constructor() : this("", "","")
-
-//}
-
-
