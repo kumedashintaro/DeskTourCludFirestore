@@ -36,7 +36,7 @@ class AddActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add)
 
-        bottomselct()
+        bottomSelect()
 
         selectophoto_desk_button.setOnClickListener {
 
@@ -151,7 +151,7 @@ class AddActivity : AppCompatActivity() {
     }
 
 
-    private fun bottomselct(){
+    private fun bottomSelect(){
 
         // init image buttons
 //        youtubeBtn = findViewById(R.id.youtubeBtn)

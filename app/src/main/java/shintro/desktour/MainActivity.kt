@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottomselct()
+        bottomSelect()
 
         val adapter = GroupAdapter<ViewHolder>()
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun bottomselct(){
+    private fun bottomSelect(){
 
         // init image buttons
 //        youtubeBtn = findViewById(R.id.youtubeBtn)

@@ -21,7 +21,7 @@ class NotLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_not_login)
 
-        bottomselct()
+        bottomSelect()
 
         login_button.setOnClickListener {
 
@@ -61,7 +61,7 @@ class NotLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun bottomselct(){
+    private fun bottomSelect(){
 
         // init image buttons
 //        youtubeBtn = findViewById(R.id.youtubeBtn)
