@@ -21,11 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.desk_view.view.*
 
 class MainActivity : AppCompatActivity() {
-
-
-    val user = FirebaseAuth.getInstance().currentUser
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -94,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         addBtn.setOnClickListener {
+            val user = FirebaseAuth.getInstance().currentUser
             if(user == null){
                 Toast.makeText(this, "投稿するにはログインが必要です。", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -104,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         parsonBtn.setOnClickListener {
+            val user = FirebaseAuth.getInstance().currentUser
             if(user == null){
                 val intent = Intent(this, NotLoginActivity::class.java)
                 startActivity(intent)
