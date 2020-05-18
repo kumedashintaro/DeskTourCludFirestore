@@ -21,17 +21,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.desk_view.view.*
 
 class MainActivity : AppCompatActivity() {
-    
+
+    val adapter = GroupAdapter<ViewHolder>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         bottomSelect()
-
-        val adapter = GroupAdapter<ViewHolder>()
-
-        //adapter.add(DeskItem())
-
+        
         recyclerview_desk.adapter = adapter
         recyclerview_desk.layoutManager = LinearLayoutManager(this)
 
@@ -49,9 +47,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onDataChange(p0: DataSnapshot) {
 
-
-                val adapter = GroupAdapter<ViewHolder>()
-
                 p0.children.forEach{
                     Log.d("MainActivity", it.toString())
                     val desk = it.getValue(Desk::class.java)
@@ -62,25 +57,16 @@ class MainActivity : AppCompatActivity() {
 
                 adapter.setOnItemClickListener{item, view ->
 
-
                     val deskItem = item as DeskItem
-
                     val intent = Intent(view.context,DetailDeskActivity::class.java)
- //                  intent.putExtra(DESK_KEY, deskItem.desk.uid)
                     intent.putExtra(DESK_KEY,deskItem.desk)
-
-
                     startActivity(intent)
                 }
-
-                recyclerview_desk.adapter = adapter
             }
-
             override fun onCancelled(p0: DatabaseError) {
             }
         })
     }
-
 
     private fun bottomSelect(){
 
