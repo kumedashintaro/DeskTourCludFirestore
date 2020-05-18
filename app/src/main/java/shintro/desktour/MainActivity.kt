@@ -22,10 +22,7 @@ import kotlinx.android.synthetic.main.desk_view.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var youtubeBtn: ImageButton
-    private lateinit var homeBtn: ImageButton
-    private lateinit var parsonBtn: ImageButton
-    private lateinit var addBtn: ImageButton
+
     val user = FirebaseAuth.getInstance().currentUser
 
 
@@ -90,17 +87,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun bottomSelect(){
-
-        // init image buttons
-//        youtubeBtn = findViewById(R.id.youtubeBtn)
-        homeBtn = findViewById(R.id.homeBtn)
-        addBtn = findViewById(R.id.addBtn)
-        parsonBtn = findViewById(R.id.parsonBtn)
-
-        //onclick listner
-//        youtubeBtn.setOnClickListener {
-
-//        }
 
         homeBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
