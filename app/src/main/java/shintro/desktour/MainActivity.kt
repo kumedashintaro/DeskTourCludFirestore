@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.desk_view.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    val adapter = GroupAdapter<ViewHolder>()
+    private val adapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
