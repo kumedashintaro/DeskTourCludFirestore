@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
 //        youtubeBtn = findViewById(R.id.youtubeBtn)
         homeBtn = findViewById(R.id.homeBtn)
         addBtn = findViewById(R.id.addBtn)
-        parsonBtn = findViewById(R.id.parsonBtn)
+        parsonBtn = findViewById(R.id.personBtn)
 
         //onclick listner
 //        youtubeBtn.setOnClickListener {

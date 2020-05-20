@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -157,7 +156,7 @@ class AddActivity : AppCompatActivity() {
 //        youtubeBtn = findViewById(R.id.youtubeBtn)
         homeBtn = findViewById(R.id.homeBtn)
         addBtn = findViewById(R.id.addBtn)
-        parsonBtn = findViewById(R.id.parsonBtn)
+        parsonBtn = findViewById(R.id.personBtn)
 
         //onclick listner
 //        youtubeBtn.setOnClickListener {

@@ -87,7 +87,7 @@ tools:context=".LoginActivity">
 
 
         <ImageButton
-            android:id="@+id/parsonBtn"
+            android:id="@+id/personBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
