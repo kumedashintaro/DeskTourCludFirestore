@@ -5,7 +5,4 @@ import kotlinx.android.parcel.Parcelize
 
 
 @Parcelize
-class Desk(val uid: String, val titel: String, val comment: String, val profileImageUrl: String , val deskuid: String): Parcelable {
-    constructor() : this("", "","", "","")
-
-}
+data class Desk(var uid: String = "", var titel: String = "", var comment: String = "", var profileImageUrl: String = "" , var deskuid: String = ""): Parcelable
