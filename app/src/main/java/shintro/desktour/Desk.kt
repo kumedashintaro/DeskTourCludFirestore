@@ -5,4 +5,4 @@ import kotlinx.android.parcel.Parcelize
 
 
 @Parcelize
-data class Desk(val uid: String="", val titel: String ="", val comment: String ="", val profileImageUrl: String ="", val deskuid: String =""): Parcelable
+data class Desk(var uid: String="", var titel: String="", var comment: String="", var profileImageUrl: String="" , var deskuid: String=""): Parcelable
