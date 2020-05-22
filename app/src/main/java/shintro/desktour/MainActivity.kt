@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -28,46 +30,61 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bottomSelect()
-        
+
         recyclerview_desk.adapter = adapter
         recyclerview_desk.layoutManager = LinearLayoutManager(this)
 
         fetchDesk()
+
+        val fragmentHomeBtn = findViewById<Button>(R.id.fragment_homeBtn)
+        val homeFragment = HomeFragment()
+
+        fragmentHomeBtn.setOnClickListener {
+            replaceFragment(homeFragment)
+        }
+    }
+
+    fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fragment)
+        fragmentTransaction.commit()
     }
 
 
-    companion object{
+    companion object {
         val DESK_KEY = "DESK_KEY"
     }
 
-    private fun fetchDesk(){
+    private fun fetchDesk() {
         val ref = FirebaseDatabase.getInstance().getReference("/desk")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
 
-                p0.children.forEach{
+                p0.children.forEach {
                     Log.d("MainActivity", it.toString())
                     val desk = it.getValue(Desk::class.java)
-                    if (desk != null){
+                    if (desk != null) {
                         adapter.add(DeskItem(desk))
                     }
                 }
 
-                adapter.setOnItemClickListener{item, view ->
+                adapter.setOnItemClickListener { item, view ->
 
                     val deskItem = item as DeskItem
-                    val intent = Intent(view.context,DetailDeskActivity::class.java)
-                    intent.putExtra(DESK_KEY,deskItem.desk)
+                    val intent = Intent(view.context, DetailDeskActivity::class.java)
+                    intent.putExtra(DESK_KEY, deskItem.desk)
                     startActivity(intent)
                 }
             }
+
             override fun onCancelled(p0: DatabaseError) {
             }
         })
     }
 
-    private fun bottomSelect(){
+    private fun bottomSelect() {
 
         homeBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -76,10 +93,10 @@ class MainActivity : AppCompatActivity() {
 
         addBtn.setOnClickListener {
             val user = FirebaseAuth.getInstance().currentUser
-            if(user == null){
+            if (user == null) {
                 Toast.makeText(this, "投稿するにはログインが必要です。", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }else{
+            } else {
                 val intent = Intent(this, AddActivity::class.java)
                 startActivity(intent)
             }
@@ -87,10 +104,10 @@ class MainActivity : AppCompatActivity() {
 
         personBtn.setOnClickListener {
             val user = FirebaseAuth.getInstance().currentUser
-            if(user == null){
+            if (user == null) {
                 val intent = Intent(this, NotLoginActivity::class.java)
                 startActivity(intent)
-            }else{
+            } else {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }
@@ -98,7 +115,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class DeskItem(val desk: Desk): Item<ViewHolder>(){
+class DeskItem(val desk: Desk) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.desk_title.text = desk.titel
