@@ -3,7 +3,6 @@ package shintro.desktour
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.desk_view.view.*
 import kotlinx.android.synthetic.main.home_fragment.*
 
@@ -31,16 +29,24 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         recyclerview_desk_homeFragment.adapter = adapter
         recyclerview_desk_homeFragment.layoutManager = LinearLayoutManager(activity)
+
+        adapter.setOnItemClickListener { item, view ->
+
+            val deskItem = item as shintro.desktour.DeskItem
+            val intent = Intent(view.context, DetailDeskActivity::class.java)
+            intent.putExtra(DESK_KEY, deskItem.desk)
+            startActivity(intent)
+        }
 
         fetchDesk()
     }
@@ -53,23 +59,15 @@ class HomeFragment : Fragment() {
         val ref = FirebaseDatabase.getInstance().getReference("/desk")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
+
+
             override fun onDataChange(p0: DataSnapshot) {
 
-                p0.children.forEach {
-                    Log.d("MainActivity", it.toString())
-                    val desk = it.getValue(Desk::class.java)
-                    if (desk != null) {
-                        adapter.add(DeskItem(desk))
+                p0.children.mapNotNull { it.getValue(Desk::class.java) }
+                    .map { DeskItem(it) }
+                    .forEach {
+                        adapter.add(it)
                     }
-                }
-
-                adapter.setOnItemClickListener { item, view ->
-
-                    val deskItem = item as shintro.desktour.DeskItemHome
-                    val intent = Intent(view.context, DetailDeskActivity::class.java)
-                    intent.putExtra(DESK_KEY, deskItem.desk)
-                    startActivity(intent)
-                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -78,7 +76,7 @@ class HomeFragment : Fragment() {
     }
 }
 
-class DeskItemHome(val desk: Desk) : Item<ViewHolder>() {
+class DeskItem(val desk: Desk) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.desk_title.text = desk.titel
