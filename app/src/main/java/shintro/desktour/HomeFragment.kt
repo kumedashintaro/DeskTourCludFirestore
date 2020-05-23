@@ -58,9 +58,7 @@ class HomeFragment : Fragment() {
     private fun fetchDesk() {
         val ref = FirebaseDatabase.getInstance().getReference("/desk")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
-
-
-
+            
             override fun onDataChange(p0: DataSnapshot) {
 
                 p0.children.mapNotNull { it.getValue(Desk::class.java) }
