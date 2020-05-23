@@ -3,8 +3,6 @@ package shintro.desktour
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         val homeFragment = HomeFragment()
 
-        findViewById<Button>(R.id.fragment_homeBtn).setOnClickListener {
+        fragment_homeBtn.setOnClickListener {
             replaceFragment(homeFragment)
         }
     }
