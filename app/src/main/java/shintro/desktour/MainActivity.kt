@@ -1,11 +1,9 @@
 package shintro.desktour
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.google.firebase.auth.FirebaseAuth
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -14,50 +12,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottomSelect()
+        val navController = findNavController(R.id.nav_host_fragment)
+        setupWithNavController(bottom_navigation, navController)
 
-        val homeFragment = HomeFragment()
-
-        fragment_homeBtn.setOnClickListener {
-            replaceFragment(homeFragment)
-        }
-    }
-
-    fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, fragment)
-        fragmentTransaction.commit()
-    }
-
-    private fun bottomSelect() {
-
-        homeBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-
-        addBtn.setOnClickListener {
-            val user = FirebaseAuth.getInstance().currentUser
-            if (user == null) {
-                Toast.makeText(this, "投稿するにはログインが必要です。", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else {
-                val intent = Intent(this, AddActivity::class.java)
-                startActivity(intent)
-            }
-        }
-
-        personBtn.setOnClickListener {
-            val user = FirebaseAuth.getInstance().currentUser
-            if (user == null) {
-                val intent = Intent(this, NotLoginActivity::class.java)
-                startActivity(intent)
-            } else {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-            }
-        }
     }
 }
 
