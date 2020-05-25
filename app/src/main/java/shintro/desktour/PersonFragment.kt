@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -28,20 +29,20 @@ class PersonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val user = FirebaseAuth.getInstance().uid
-        if (user == null){
-            sign_in_screen_button.visibility = View.VISIBLE
-            regsiter_text_view.visibility = View.VISIBLE
-            sign_out_button.visibility = View.INVISIBLE
-            username_textview.visibility = View.INVISIBLE
+        val userid = FirebaseAuth.getInstance().uid
+        if (userid == null) {
+            sign_in_screen_button.isVisible = true
+            regsiter_text_view.isVisible = true
+            sign_out_button.isVisible = false
+            username_textview.isVisible = false
         } else {
-            sign_in_screen_button.visibility = View.INVISIBLE
-            regsiter_text_view.visibility = View.INVISIBLE
-            sign_out_button.visibility = View.VISIBLE
-            username_textview.visibility = View.VISIBLE
+            sign_in_screen_button.isVisible = false
+            regsiter_text_view.isVisible = false
+            sign_out_button.isVisible = true
+            username_textview.isVisible = true
         }
 
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$user")
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$userid")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {

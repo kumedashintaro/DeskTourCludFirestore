@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -36,12 +35,7 @@ class AddFragment : Fragment() {
 
         selectophoto_desk_button.setOnClickListener {
 
-            if (activity?.let { it1 ->
-                    ContextCompat.checkSelfPermission(
-                        it1,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
-                } == PackageManager.PERMISSION_GRANTED) {
+            if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 // 許可されている
                 myStorageEnable()
             } else {
@@ -57,9 +51,9 @@ class AddFragment : Fragment() {
 
         add_button.setOnClickListener {
             val user = FirebaseAuth.getInstance().uid
-            if(user == null){
+            if (user == null) {
                 Toast.makeText(activity, "投稿するにはログインして下さい。", Toast.LENGTH_LONG).show()
-            }else {
+            } else {
                 performRegister()
             }
         }
@@ -71,7 +65,7 @@ class AddFragment : Fragment() {
         startActivityForResult(intent, 0)
     }
 
-    var selectedPhotUri: Uri? = null
+    var selectedPhotoUri: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -79,9 +73,9 @@ class AddFragment : Fragment() {
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             Log.d("AddFragment", "Photo was selected")
 
-            selectedPhotUri = data.data
+            selectedPhotoUri = data.data
 
-            Picasso.get().load(selectedPhotUri).into(selectdeskphoto_imageview)
+            Picasso.get().load(selectedPhotoUri).into(selectdeskphoto_imageview)
 
             selectophoto_desk_button.alpha = 0f
         }
@@ -91,24 +85,24 @@ class AddFragment : Fragment() {
         val comment = add_comment_edittext.text.toString()
         val title = add_title_edittext.text.toString()
 
-        if (comment.isEmpty() || title.isEmpty() || selectedPhotUri == null) {
+        if (comment.isEmpty() || title.isEmpty() || selectedPhotoUri == null) {
             Toast.makeText(activity, "写真の選択 又は 入力漏れがあります。", Toast.LENGTH_LONG).show()
             return
         }
         Log.d("AddFragment", "title: " + title)
         Log.d("AddFragment", "comment: " + comment)
-        Log.d("AddFragment", "selectedPhotUri:" + selectedPhotUri)
+        Log.d("AddFragment", "selectedPhotUri:" + selectedPhotoUri)
 
         uploadImageToFirebaseStorage()
     }
 
     private fun uploadImageToFirebaseStorage() {
-        if (selectedPhotUri == null) return
+        if (selectedPhotoUri == null) return
 
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/deskimages/$filename")
 
-        ref.putFile(selectedPhotUri!!)
+        ref.putFile(selectedPhotoUri!!)
             .addOnSuccessListener {
                 Log.d("AddFragment", "Successfully uploaded image: ${it.metadata?.path}")
 
