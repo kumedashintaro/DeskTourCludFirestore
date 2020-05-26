@@ -54,7 +54,9 @@ class AddFragment : Fragment() {
             if (user == null) {
                 Toast.makeText(activity, "投稿するにはログインして下さい。", Toast.LENGTH_LONG).show()
             } else {
-                performRegister()
+                val comment = add_comment_edittext.text.toString()
+                val title = add_title_edittext.text.toString()
+                performRegister(comment, title)
             }
         }
     }
@@ -81,9 +83,7 @@ class AddFragment : Fragment() {
         }
     }
 
-    private fun performRegister() {
-        val comment = add_comment_edittext.text.toString()
-        val title = add_title_edittext.text.toString()
+    private fun performRegister(comment: String, title: String) {
 
         if (comment.isEmpty() || title.isEmpty() || selectedPhotoUri == null) {
             Toast.makeText(activity, "写真の選択 又は 入力漏れがあります。", Toast.LENGTH_LONG).show()
@@ -97,11 +97,11 @@ class AddFragment : Fragment() {
     }
 
     private fun uploadImageToFirebaseStorage() {
-        if (selectedPhotoUri == null) return
 
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/deskimages/$filename")
 
+        
         ref.putFile(selectedPhotoUri!!)
             .addOnSuccessListener {
                 Log.d("AddFragment", "Successfully uploaded image: ${it.metadata?.path}")

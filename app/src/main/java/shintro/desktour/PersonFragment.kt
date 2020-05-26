@@ -49,7 +49,7 @@ class PersonFragment : Fragment() {
                 // Get Post object and use the values to update the UI
                 val post = dataSnapshot.getValue(User::class.java)
 
-                username_rogin_edittext.setText(post?.username)
+                username_rogin_edittext.text = post?.username
                 Picasso.get().load(post?.profileImageUrl).into(selectphoto_imageview)
             }
 
