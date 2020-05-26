@@ -93,22 +93,22 @@ class AddFragment : Fragment() {
         Log.d("AddFragment", "comment: " + comment)
         Log.d("AddFragment", "selectedPhotUri:" + selectedPhotoUri)
 
-        uploadImageToFirebaseStorage()
+        uploadImageToFirebaseStorage(comment, title)
     }
 
-    private fun uploadImageToFirebaseStorage() {
+    private fun uploadImageToFirebaseStorage(comment: String, title: String) {
 
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/deskimages/$filename")
 
-        
+
         ref.putFile(selectedPhotoUri!!)
             .addOnSuccessListener {
                 Log.d("AddFragment", "Successfully uploaded image: ${it.metadata?.path}")
 
                 ref.downloadUrl.addOnSuccessListener {
                     Log.d("AddFragment", "File Location: $it")
-                    saveUserToFirebaseDatabase(it.toString())
+                    saveUserToFirebaseDatabase(it.toString(),comment, title)
                 }
             }
             .addOnFailureListener {
@@ -116,14 +116,14 @@ class AddFragment : Fragment() {
             }
     }
 
-    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String,comment: String, title: String) {
         val deskuid = UUID.randomUUID().toString()
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/desk").push()
         val desk = Desk(
             uid,
-            add_title_edittext.text.toString(),
-            add_comment_edittext.text.toString(),
+            title,
+            comment,
             profileImageUrl,
             deskuid
         )
