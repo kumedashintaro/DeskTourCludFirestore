@@ -56,7 +56,7 @@ class AddFragment : Fragment() {
             } else {
                 val comment = add_comment_edittext.text.toString()
                 val title = add_title_edittext.text.toString()
-                performRegister(comment, title)
+                performRegister(comment, title, selectedPhotoUri)
             }
         }
     }
@@ -83,7 +83,7 @@ class AddFragment : Fragment() {
         }
     }
 
-    private fun performRegister(comment: String, title: String) {
+    private fun performRegister(comment: String, title: String, selectedPhotoUri: Uri?) {
 
         if (comment.isEmpty() || title.isEmpty() || selectedPhotoUri == null) {
             Toast.makeText(activity, "写真の選択 又は 入力漏れがあります。", Toast.LENGTH_LONG).show()
@@ -93,27 +93,28 @@ class AddFragment : Fragment() {
         Log.d("AddFragment", "comment: " + comment)
         Log.d("AddFragment", "selectedPhotUri:" + selectedPhotoUri)
 
-        uploadImageToFirebaseStorage(comment, title)
+        uploadImageToFirebaseStorage(comment, title, selectedPhotoUri)
     }
 
-    private fun uploadImageToFirebaseStorage(comment: String, title: String) {
+    private fun uploadImageToFirebaseStorage(comment: String, title: String, selectedPhotoUri: Uri?) {
 
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/deskimages/$filename")
 
+        if (selectedPhotoUri != null) {
+            ref.putFile(selectedPhotoUri)
+                .addOnSuccessListener {
+                    Log.d("AddFragment", "Successfully uploaded image: ${it.metadata?.path}")
 
-        ref.putFile(selectedPhotoUri!!)
-            .addOnSuccessListener {
-                Log.d("AddFragment", "Successfully uploaded image: ${it.metadata?.path}")
-
-                ref.downloadUrl.addOnSuccessListener {
-                    Log.d("AddFragment", "File Location: $it")
-                    saveUserToFirebaseDatabase(it.toString(),comment, title)
+                    ref.downloadUrl.addOnSuccessListener {
+                        Log.d("AddFragment", "File Location: $it")
+                        saveUserToFirebaseDatabase(it.toString(),comment, title)
+                    }
                 }
-            }
-            .addOnFailureListener {
-                //do some logging here
-            }
+                .addOnFailureListener {
+                    //do some logging here
+                }
+        }
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,comment: String, title: String) {
