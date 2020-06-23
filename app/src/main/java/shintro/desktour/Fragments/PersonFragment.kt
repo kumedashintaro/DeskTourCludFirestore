@@ -1,4 +1,4 @@
-package shintro.desktour
+package shintaro.desktour_cluod_firestore
 
 import android.content.Intent
 import android.os.Bundle
