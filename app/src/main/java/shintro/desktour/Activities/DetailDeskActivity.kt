@@ -30,10 +30,10 @@ class DetailDeskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_desk)
 
-        //val adapter = GroupAdapter<ViewHolder>()
+
         recyclerview_detail_desk.adapter = adapter
-        //recyclerview_detail_desk.layoutManager = LinearLayoutManager(this)
-        toDesk = intent.getParcelableExtra<Desk>(HomeFragment.DESK_KEY)
+
+        //toDesk = intent.getParcelableExtra<Desk>(HomeFragment.DESK_KEY)
         Log.d("DetailDeskActivity", "key: " + toDesk)
 
         profileset()

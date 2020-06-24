@@ -8,17 +8,17 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="shintro.desktour.HomeFragment"
+        android:name="shintaro.desktour_cluod_firestore.HomeFragment"
         android:label="Home" />
 
     <fragment
         android:id="@+id/navigation_add"
-        android:name="shintro.desktour.AddFragment"
+        android:name="shintaro.desktour_cluod_firestore.AddFragment"
         android:label="Home" />
 
     <fragment
         android:id="@+id/navigation_person"
-        android:name="shintro.desktour.PersonFragment"
+        android:name="shintaro.desktour_cluod_firestore.PersonFragment"
         android:label="Home" />
 
 </navigation>

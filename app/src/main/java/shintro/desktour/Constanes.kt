@@ -1,4 +1,4 @@
-package shintro.desktour
+package shintaro.desktour_cluod_firestore
 
 //Collection Reference
 
@@ -22,6 +22,7 @@ const val COMMENT_TXT = "commentTxt"
 const val TIMESTAMP = "timestamp"
 const val USERNAME ="username"
 const val DATE_CREATED = "dateCreated"
+const val TITLE = "title"
 
 // Other Constants
 const val DOCUMENT_KEY = "docId"
