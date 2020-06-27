@@ -35,29 +35,29 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val itemClick: (DeskTou
 
     inner class ViewHolder(itemView: View?, val itemClick: (DeskTourDate) -> Unit) : RecyclerView.ViewHolder(itemView!!) {
 
-        val username = itemView?.findViewById<TextView>(R.id.listViewUsername)
-        val timestamp = itemView?.findViewById<TextView>(R.id.listViewTimestamp)
-        val thoughtTxt = itemView?.findViewById<TextView>(R.id.listViewThoughtTxt)
-        val numLikes = itemView?.findViewById<TextView>(R.id.listViewNumLikesLb)
-        val likesImages = itemView?.findViewById<ImageView>(R.id.listViewLikesImage)
-        val numComments = itemView?.findViewById<TextView>(R.id.numCommentsLbl)
+        val title = itemView?.findViewById<TextView>(R.id.desk_title)
+        val timestamp = itemView?.findViewById<TextView>(R.id.desk_timstamp)
+        val comment = itemView?.findViewById<TextView>(R.id.desk_comment)
+        val numLikes = itemView?.findViewById<TextView>(R.id.desk_numLikes)
+        val likesImages = itemView?.findViewById<ImageView>(R.id.desk_ikesImage)
+        val numComments = itemView?.findViewById<TextView>(R.id.desk_numCommentsLbl)
 
-        fun bindThought(thought: Thought) {
+        fun bindThought(deskTourDate: DeskTourDate) {
 
-            username?.text = thought.username
-            thoughtTxt?.text = thought.thoughtTxt
-            numLikes?.text = thought.numLikes.toString()
-            itemView.setOnClickListener { itemClick(thought) }
-            numComments?.text = thought.NumComments.toString()
+            title?.text = deskTourDate.title
+            comment?.text = deskTourDate.comment
+            numLikes?.text = deskTourDate.numLikes.toString()
+            itemView.setOnClickListener { itemClick(deskTourDate) }
+            numComments?.text = deskTourDate.NumComments.toString()
 
             val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
-            val dateString = dateFormatter.format(thought.timestamp)
+            val dateString = dateFormatter.format(deskTourDate.timestamp)
             timestamp?.text = dateString
 
-            likesImages?.setOnClickListener{
-                FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thought.documentId)
-                    .update(NUM_LIKES, thought.numLikes +1)
-            }
+            //likesImages?.setOnClickListener{
+              //  FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thought.documentId)
+                //    .update(NUM_LIKES, thought.numLikes +1)
+            //}
         }
     }
 }

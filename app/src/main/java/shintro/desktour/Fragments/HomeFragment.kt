@@ -14,11 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.desk_view.view.*
 import kotlinx.android.synthetic.main.home_fragment.*
+import shintro.desktour.Adapters.HomeAdapter
 
 
 /**
@@ -26,7 +23,7 @@ import kotlinx.android.synthetic.main.home_fragment.*
  */
 class HomeFragment : Fragment() {
 
-    private val adapter = GroupAdapter<ViewHolder>()
+    lateinit var homeAdapter: HomeAdapter
     val desktour = arrayListOf<DeskTourDate>()
     val desktourCollectionRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
     lateinit var desktourListener: ListenerRegistration
@@ -42,8 +39,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerview_desk_homeFragment.adapter = adapter
-        recyclerview_desk_homeFragment.layoutManager = LinearLayoutManager(activity)
+        homeAdapter = HomeAdapter(desktour){
+
+        }
+
+        recyclerview_desk_homeFragment.adapter = homeAdapter
+        val layoutManager = LinearLayoutManager(activity)
+        recyclerview_desk_homeFragment.layoutManager = layoutManager
+
         setListener()
     }
 
@@ -59,6 +62,7 @@ class HomeFragment : Fragment() {
                 }
 
                 if (snapshot != null) {
+                    Log.e("Exception", "retrieve documents: $exception")
                     paresData(snapshot)
                 }
             }
@@ -89,10 +93,9 @@ class HomeFragment : Fragment() {
             desktour.add(newDeskTour)
 
         }
-        adapter.notifyDataSetChanged()
+        homeAdapter.notifyDataSetChanged()
 
     }
-
 }
 
 

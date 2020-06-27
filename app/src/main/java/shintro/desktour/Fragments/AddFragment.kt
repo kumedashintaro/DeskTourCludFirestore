@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.add_comment.*
@@ -116,24 +118,25 @@ class AddFragment : Fragment() {
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,comment: String, title: String) {
-        val deskuid = UUID.randomUUID().toString()
-        val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/desk").push()
-        val desk = Desk(
-            uid,
-            title,
-            comment,
-            profileImageUrl,
-            deskuid
-        )
 
-        ref.setValue(desk)
-            .addOnSuccessListener {
-                Log.d("AddFragment", "Finally we saved the user to Firebase Database")
+        val data = HashMap<String, Any>()
+        data.put(NUM_COMMENTS, 0)
+        data.put(NUM_LIKES, 0)
+        data.put(TITLE, title)
+        data.put(COMMENT_TXT, comment)
+        data.put(TIMESTAMP, FieldValue.serverTimestamp())
+        //data.put(USERNAME, FirebaseAuth.getInstance().currentUser?.displayName.toString())
 
+
+        FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
+            .add(data)
+            .addOnSuccessListener{
                 val intent = Intent(activity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
+            }
+            .addOnFailureListener{exception ->
+                Log.e("Exception","Could not add post: $exception")
             }
     }
 

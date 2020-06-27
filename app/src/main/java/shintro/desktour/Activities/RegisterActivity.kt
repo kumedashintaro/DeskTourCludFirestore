@@ -14,7 +14,10 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
@@ -60,31 +63,71 @@ class RegisterActivity : AppCompatActivity() {
     private fun performRegister() {
         val email = email_edittext.text.toString()
         val password = paswward_edittext.text.toString()
+        val username = username_edittext.text.toString()
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             Toast.makeText(this, "E-mail 又は Password を入力して下さい ", Toast.LENGTH_LONG).show()
             return
         }
+
         Log.d("RegisterActivity", "Email is: " + email)
         Log.d("RegisterActivity", "Password: $password")
 
+
+//        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+//            .addOnCompleteListener {
+//                if (!it.isSuccessful) return@addOnCompleteListener
+//
+//                Log.d(
+//                    "RegisterActivity",
+//                    "Successfully created user with uid:${it.result?.user?.uid}"
+//                )
+//
+//                uploadImageToFirebaseStorage()
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+//                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+//            }
+
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                if (!it.isSuccessful) return@addOnCompleteListener
+            .addOnSuccessListener { result ->
 
-                Log.d(
-                    "RegisterActivity",
-                    "Successfully created user with uid:${it.result?.user?.uid}"
-                )
+                val changeRequest = UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
 
-                uploadImageToFirebaseStorage()
+                result.user?.updateProfile(changeRequest)?.addOnFailureListener { exception ->
+                    Log.e(
+                        "Exception:",
+                        "Could not update display name: ${exception.localizedMessage} "
+                    )
+                }
+
+                val data = HashMap<String, Any>()
+                data.put(USERNAME, username)
+                data.put(DATE_CREATED, FieldValue.serverTimestamp())
+
+                result.user?.uid?.let {
+                    FirebaseFirestore.getInstance().collection(USER_REF).document(it)
+                        .set(data)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "登録しました ", Toast.LENGTH_LONG).show()
+
+                            uploadImageToFirebaseStorage()
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+                            // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+                            Log.e(
+                                "Exception:",
+                                "Could not user document: ${exception.localizedMessage} "
+                            )
+                        }
+                }
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
-                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
-            }
 
-    }
+            }
 
     private fun uploadImageToFirebaseStorage() {
         if (selectedPhotUri == null) return

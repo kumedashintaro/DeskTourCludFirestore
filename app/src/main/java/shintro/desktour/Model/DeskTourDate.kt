@@ -4,5 +4,5 @@ import java.util.*
 
 
 data class DeskTourDate(
-    val timestamp: String, val title: String, val thoughtTxt: Date,
+    val title: String, val comment: String, val timestamp: Date,
     val numLikes: Int, val NumComments: Int, val documentId: String)

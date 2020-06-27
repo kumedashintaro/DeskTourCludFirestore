@@ -2,7 +2,7 @@ package shintaro.desktour_cluod_firestore
 
 //Collection Reference
 
-const val DESKTOUR_REF = "desktour"
+const val DESKTOUR_REF = "deskTour"
 const val USER_REF ="users"
 const val COMMENTS_REF = "comments"
 
@@ -15,14 +15,14 @@ const val POPULAR = "popular"
 
 // Fields
 
-const val CATEGORY = "category"
+
 const val NUM_COMMENTS = "numComments"
 const val NUM_LIKES = "numLikes"
-const val COMMENT_TXT = "commentTxt"
+const val COMMENT_TXT = "comment"
 const val TIMESTAMP = "timestamp"
-const val USERNAME ="username"
 const val DATE_CREATED = "dateCreated"
 const val TITLE = "title"
+const val USERNAME ="username"
 
 // Other Constants
 const val DOCUMENT_KEY = "docId"
