@@ -23,6 +23,7 @@ const val TIMESTAMP = "timestamp"
 const val DATE_CREATED = "dateCreated"
 const val TITLE = "title"
 const val USERNAME ="username"
+const val PROFILEIMAGEURL = "profileImageUrl"
 
 // Other Constants
 const val DOCUMENT_KEY = "docId"
