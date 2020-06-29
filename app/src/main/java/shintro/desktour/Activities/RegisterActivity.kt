@@ -66,29 +66,13 @@ class RegisterActivity : AppCompatActivity() {
         val username = username_edittext.text.toString()
 
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
-            Toast.makeText(this, "E-mail 又は Password を入力して下さい ", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "入力漏れがあります。", Toast.LENGTH_LONG).show()
             return
         }
 
         Log.d("RegisterActivity", "Email is: " + email)
         Log.d("RegisterActivity", "Password: $password")
 
-
-//        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-//            .addOnCompleteListener {
-//                if (!it.isSuccessful) return@addOnCompleteListener
-//
-//                Log.d(
-//                    "RegisterActivity",
-//                    "Successfully created user with uid:${it.result?.user?.uid}"
-//                )
-//
-//                uploadImageToFirebaseStorage()
-//            }
-//            .addOnFailureListener {
-//                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
-//                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
-//            }
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
@@ -104,32 +88,13 @@ class RegisterActivity : AppCompatActivity() {
                     )
                 }
 
-                val data = HashMap<String, Any>()
-                data.put(USERNAME, username)
-                data.put(DATE_CREATED, FieldValue.serverTimestamp())
-
-                result.user?.uid?.let {
-                    FirebaseFirestore.getInstance().collection(USER_REF).document(it)
-                        .set(data)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "登録しました ", Toast.LENGTH_LONG).show()
-
-                            uploadImageToFirebaseStorage()
-                        }
-                        .addOnFailureListener { exception ->
-                            Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
-                            // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
-                            Log.e(
-                                "Exception:",
-                                "Could not user document: ${exception.localizedMessage} "
-                            )
-                        }
-                }
-            }
+                uploadImageToFirebaseStorage(username)
 
             }
 
-    private fun uploadImageToFirebaseStorage() {
+    }
+
+    private fun uploadImageToFirebaseStorage(username: String) {
         if (selectedPhotUri == null) return
 
         val filename = UUID.randomUUID().toString()
@@ -142,7 +107,7 @@ class RegisterActivity : AppCompatActivity() {
                 ref.downloadUrl.addOnSuccessListener {
                     Log.d("RegisterActivity", "File Location: $it")
 
-                    saveUserToFirebaseDatabase(it.toString())
+                    saveUserToFirebaseDatabase(it.toString(), username)
 
                 }
             }
@@ -151,21 +116,33 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
-        val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String, username: String) {
 
-        val user = User(uid, username_edittext.text.toString(), profileImageUrl)
+        val data = HashMap<String, Any>()
+        data.put(USERNAME, username)
+        data.put(PROFILEIMAGEURL, profileImageUrl)
+        data.put(DATE_CREATED, FieldValue.serverTimestamp())
 
-        ref.setValue(user)
+        FirebaseFirestore.getInstance().collection(USER_REF)
+            .add(data)
             .addOnSuccessListener {
-                Log.d("RegisterActivity", "Finally we saved the user to Firebase Database")
+                Toast.makeText(this, "登録しました ", Toast.LENGTH_LONG).show()
 
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
 
+
             }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+                // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+                Log.e(
+                    "Exception:",
+                    "Could not user document: ${exception.localizedMessage} "
+                )
+            }
+
     }
 
 
