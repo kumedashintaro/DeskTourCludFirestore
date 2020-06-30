@@ -1,17 +1,21 @@
 package shintaro.desktour_cluod_firestore
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.person_fragment.*
 
@@ -42,21 +46,30 @@ class PersonFragment : Fragment() {
             username_textview.isVisible = true
         }
 
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$userid")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Get Post object and use the values to update the UI
-                val post = dataSnapshot.getValue(User::class.java)
+        val desktourCollectionRef = FirebaseFirestore.getInstance().collection(USER_REF)
+            .document(userid.toString()
+        )
 
-                username_rogin_edittext.text = post?.username
-                Picasso.get().load(post?.profileImageUrl).into(selectphoto_imageview)
+        desktourCollectionRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+
+                    val username = document.data?.get("username")
+                    val profileImageUrl = document.data?.get("profileImageUrl")
+
+                    username_rogin_edittext.text = username.toString()
+                    Picasso.get().load(profileImageUrl.toString()).into(selectphoto_imageview)
+
+                } else {
+                    Log.d(TAG, "No such document")
+                }
             }
-
-            override fun onCancelled(p0: DatabaseError) {
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
             }
-        })
-
+        
         sign_out_button.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
 

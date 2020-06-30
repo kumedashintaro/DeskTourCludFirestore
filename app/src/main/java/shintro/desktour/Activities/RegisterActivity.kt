@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,10 +11,8 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -25,11 +22,9 @@ import java.util.*
 class RegisterActivity : AppCompatActivity() {
     private val MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 1
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-
 
         selectophoto_button.setOnClickListener {
             checkPermission()
@@ -89,9 +84,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
 
                 uploadImageToFirebaseStorage(username)
-
             }
-
     }
 
     private fun uploadImageToFirebaseStorage(username: String) {
@@ -117,34 +110,35 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String, username: String) {
+        val userid = FirebaseAuth.getInstance().uid
 
         val data = HashMap<String, Any>()
         data.put(USERNAME, username)
         data.put(PROFILEIMAGEURL, profileImageUrl)
         data.put(DATE_CREATED, FieldValue.serverTimestamp())
 
-        FirebaseFirestore.getInstance().collection(USER_REF)
-            .add(data)
-            .addOnSuccessListener {
-                Toast.makeText(this, "登録しました ", Toast.LENGTH_LONG).show()
+        if (userid != null) {
+            FirebaseFirestore.getInstance().collection(USER_REF).document(userid)
+                .set(data)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "登録しました ", Toast.LENGTH_LONG).show()
 
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
 
-
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
-                // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
-                Log.e(
-                    "Exception:",
-                    "Could not user document: ${exception.localizedMessage} "
-                )
-            }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "登録に失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+                    // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+                    Log.e(
+                        "Exception:",
+                        "Could not user document: ${exception.localizedMessage} "
+                    )
+                }
+        }
 
     }
-
 
     private fun checkPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -200,7 +194,6 @@ class RegisterActivity : AppCompatActivity() {
         intent.type = "image/*"
         startActivityForResult(intent, 0)
     }
-
 }
 
 

@@ -40,7 +40,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         homeAdapter = HomeAdapter(desktour){
-
         }
 
         recyclerview_desk_homeFragment.adapter = homeAdapter
