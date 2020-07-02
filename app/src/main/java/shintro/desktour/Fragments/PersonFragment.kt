@@ -39,6 +39,7 @@ class PersonFragment : Fragment() {
             regsiter_text_view.isVisible = true
             sign_out_button.isVisible = false
             username_textview.isVisible = false
+            username_rogin_edittext.isVisible = false
         } else {
             sign_in_screen_button.isVisible = false
             regsiter_text_view.isVisible = false

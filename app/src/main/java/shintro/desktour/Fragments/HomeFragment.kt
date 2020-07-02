@@ -71,25 +71,34 @@ class HomeFragment : Fragment() {
         desktour.clear()
         for (document in snapshot.documents) {
             val data = document.data
-            val title = data?.get(TITLE) as String
-            val timestamp = data?.get(TIMESTAMP) as Timestamp
-            val commentTxt = data[COMMENT_TXT] as? String
-            val numLikes = data[NUM_LIKES] as Long
-            var numComments = data[NUM_COMMENTS] as Long
-            val documentId = document.id
 
-            if (numComments == null) numComments = 0
+            if (data?.get(TIMESTAMP) != null) {
 
-            val newDeskTour = DeskTourDate(
-                title,
-                commentTxt.toString(),
-                timestamp.toDate(),
-                numLikes.toInt(),
-                numComments.toInt(),
-                documentId
-            )
+                val title = data?.get(TITLE) as String
+                val timestamp = data[TIMESTAMP] as Timestamp
+                val commentTxt = data[COMMENT_TXT] as? String
+                val numLikes = data[NUM_LIKES] as? Long
+                var numComments = data[NUM_COMMENTS] as? Long
+                val documentId = document.id
 
-            desktour.add(newDeskTour)
+                if (numComments == null) numComments = 0
+
+                val newDeskTour = numLikes?.toInt()?.let {
+                    DeskTourDate(
+                        title,
+                        timestamp.toDate(),
+                        commentTxt.toString(),
+                        it,
+                        numComments.toInt(),
+                        documentId
+                    )
+                }
+
+                if (newDeskTour != null) {
+                    desktour.add(newDeskTour)
+                }
+
+            }
 
         }
         homeAdapter.notifyDataSetChanged()
