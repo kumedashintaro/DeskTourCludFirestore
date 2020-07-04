@@ -58,28 +58,29 @@
                 android:id="@+id/desk_ikesImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 app:srcCompat="@mipmap/star_icon_filled" />
 
             <TextView
                 android:id="@+id/desk_numLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:text="numLikes" />
+                android:padding="8dp"
+                android:text="99" />
 
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
+                android:padding="8dp"
                 app:srcCompat="@mipmap/commenticon" />
 
             <TextView
                 android:id="@+id/desk_numCommentsLbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:text="numCommentsLbl" />
+                android:padding="8dp"
+                android:text="99" />
 
             <TextView
                 android:id="@+id/desk_timstamp"
@@ -90,10 +91,6 @@
                 android:textAlignment="viewEnd" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 

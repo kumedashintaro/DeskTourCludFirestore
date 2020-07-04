@@ -7,6 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
+import shintaro.desktour_cluod_firestore.DESKTOUR_REF
 import shintaro.desktour_cluod_firestore.DeskTourDate
 import shintaro.desktour_cluod_firestore.NUM_LIKES
 import shintaro.desktour_cluod_firestore.R
@@ -41,6 +43,7 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val itemClick: (DeskTou
         val numLikes = itemView?.findViewById<TextView>(R.id.desk_numLikes)
         val likesImages = itemView?.findViewById<ImageView>(R.id.desk_ikesImage)
         val numComments = itemView?.findViewById<TextView>(R.id.desk_numCommentsLbl)
+        val deskImageUri = itemView?.findViewById<ImageView>(R.id.desk_image)
 
         fun bindThought(deskTourDate: DeskTourDate) {
 
@@ -50,14 +53,17 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val itemClick: (DeskTou
             itemView.setOnClickListener { itemClick(deskTourDate) }
             numComments?.text = deskTourDate.NumComments.toString()
 
+//            Picasso.get().load(deskTourDate.deskImageUri).into(R.id.desk_image)
+
             val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
             val dateString = dateFormatter.format(deskTourDate.timestamp)
             timestamp?.text = dateString
 
-            //likesImages?.setOnClickListener{
-              //  FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thought.documentId)
-                //    .update(NUM_LIKES, thought.numLikes +1)
-            //}
+            likesImages?.setOnClickListener{
+                FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDate.documentId)
+                    .update(NUM_LIKES, deskTourDate.numLikes +1)
+            }
         }
+
     }
 }

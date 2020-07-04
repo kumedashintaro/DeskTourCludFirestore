@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="@+id/user_imageview_detail_desk_comment" />
 
     <TextView
-        android:id="@+id/detail_desk_comment_textview"
+        android:id="@+id/detail_desk_sendComment_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

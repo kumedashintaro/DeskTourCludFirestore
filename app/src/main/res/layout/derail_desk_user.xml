@@ -18,7 +18,7 @@
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <TextView
-        android:id="@+id/detail_desl_username"
+        android:id="@+id/detail_desk_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

@@ -2,6 +2,7 @@ package shintaro.desktour_cluod_firestore
 
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.home_fragment.*
 import shintro.desktour.Adapters.HomeAdapter
 
@@ -39,7 +41,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        homeAdapter = HomeAdapter(desktour){
+        homeAdapter = HomeAdapter(desktour){desktour ->
+            val detailDeskActivity = Intent(activity, DetailDeskActivity::class.java)
+            detailDeskActivity.putExtra(DOCUMENT_KEY, desktour.documentId)
+            startActivity(detailDeskActivity)
         }
 
         recyclerview_desk_homeFragment.adapter = homeAdapter
@@ -79,6 +84,7 @@ class HomeFragment : Fragment() {
                 val commentTxt = data[COMMENT_TXT] as? String
                 val numLikes = data[NUM_LIKES] as? Long
                 var numComments = data[NUM_COMMENTS] as? Long
+                var desukImageUri = data[DESKIMAGEURI] as? String
                 val documentId = document.id
 
                 if (numComments == null) numComments = 0
@@ -90,6 +96,7 @@ class HomeFragment : Fragment() {
                         commentTxt.toString(),
                         it,
                         numComments.toInt(),
+                        desukImageUri.toString(),
                         documentId
                     )
                 }
@@ -97,12 +104,9 @@ class HomeFragment : Fragment() {
                 if (newDeskTour != null) {
                     desktour.add(newDeskTour)
                 }
-
             }
-
         }
         homeAdapter.notifyDataSetChanged()
-
     }
 }
 
