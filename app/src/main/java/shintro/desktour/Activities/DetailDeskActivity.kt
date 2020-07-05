@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
@@ -16,10 +15,8 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_detail_desk.*
 import kotlinx.android.synthetic.main.derail_desk_user.*
-import kotlinx.android.synthetic.main.detail_desk_comment.*
 import kotlinx.android.synthetic.main.detail_desk_comment.view.*
 import kotlinx.android.synthetic.main.detail_desk_image_comment.*
-import kotlinx.android.synthetic.main.detail_desk_image_comment.view.*
 import shintro.desktour.Model.Comment
 import java.util.HashMap
 
@@ -27,15 +24,8 @@ import java.util.HashMap
 class DetailDeskActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
-
     lateinit var deskTourDocumentId : String
-
-    var toDesk: Desk? = null
-
     val comments = arrayListOf<Comment>()
-
-    val desktourCommentRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId).collection(
-        COMMENTS_REF)
     lateinit var desktourListener: ListenerRegistration
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,14 +33,11 @@ class DetailDeskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_desk)
 
         recyclerview_detail_desk.adapter = adapter
-
         deskTourDocumentId = intent.getStringExtra(DOCUMENT_KEY)
-
-        Log.d("DetailDeskActivity", "key: " + deskTourDocumentId)
 
         profileset()
         commentset()
-        listenForMessages()
+        listenForMessages(deskTourDocumentId)
 
         send_button.setOnClickListener {
             val user = FirebaseAuth.getInstance().uid
@@ -108,14 +95,13 @@ class DetailDeskActivity : AppCompatActivity() {
             }
     }
 
+        private fun listenForMessages(deskTourDocumentId: String) {
 
-
-
-        private fun listenForMessages() {
-
+            val desktourCommentRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId).collection(
+                COMMENTS_REF)
 
             desktourListener = desktourCommentRef
-                .orderBy(COMMENT_CREATED, Query.Direction.DESCENDING)
+                .orderBy(COMMENT_CREATED, Query.Direction.ASCENDING)
                 .addSnapshotListener { snapshot, exception ->
 
                     if (exception != null) {
@@ -131,35 +117,76 @@ class DetailDeskActivity : AppCompatActivity() {
 
             private fun paresData(snapshot: QuerySnapshot) {
 
-
                 comments.clear()
                 for (document in snapshot.documents) {
-                    val data = document.data
-                    val comment = data?.get(COMMENT_TXT) as String
-                    val commentCreated = data?.get(COMMENT_CREATED) as Timestamp
-                    val userUid = data[USERID] as String
-                    val documentId = document.id
+
+                        val data = document.data
+
+                    if (data?.get(COMMENT_CREATED) != null) {
+
+                        val comment = data?.get(COMMENT_TXT) as String
+                        val commentCreated = data?.get(COMMENT_CREATED) as Timestamp
+                        val userUid = data[USERID] as String
+                        val documentId = document.id
 
 
-                    val newComments = Comment(
-                        comment,
-                        commentCreated.toDate(),
-                        userUid,
-                        documentId
-                    )
-
+                        val newComments = Comment(
+                            comment,
+                            commentCreated.toDate(),
+                            userUid,
+                            documentId
+                        )
 
 
                         adapter.add(DetailDeskItem(newComments))
-
-                        recyclerview_detail_desk.adapter = adapter
-                        recyclerview_detail_desk.scrollToPosition(adapter.itemCount - 1)
-
+                    }
                 }
 
+                recyclerview_detail_desk.adapter = adapter
+                //recyclerview_detail_desk.scrollToPosition(adapter.itemCount - 1)
               //  val chatMessage = getValue(DetailDesk::class.java) ?: return
 
+            }
 
+    private fun saveCommentToFirebaseDatabase() {
+
+        val userid = FirebaseAuth.getInstance().uid
+        val sendcomment = send_comment.text.toString()
+
+
+        val deskTourRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId)
+
+
+
+        FirebaseFirestore.getInstance().runTransaction { transaction ->
+
+            val thought = transaction.get(deskTourRef)
+            val numComments = thought.getLong(NUM_COMMENTS)?.plus(1)
+            transaction.update(deskTourRef, NUM_COMMENTS, numComments)
+
+            val newCommentRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
+                .document(deskTourDocumentId).collection(COMMENTS_REF).document()
+
+            val data = HashMap<String, Any>()
+            data.put(USERID, userid.toString())
+            data.put(COMMENT, sendcomment)
+            data.put(COMMENT_CREATED, FieldValue.serverTimestamp())
+
+//            data.put(COMMENT_TXT, commentTxt)
+//            data.put(TIMESTAMP, FieldValue.serverTimestamp())
+//            data.put(USERNAME, FirebaseAuth.getInstance().currentUser?.displayName.toString())
+
+            transaction.set(newCommentRef, data)
+        }
+            .addOnSuccessListener {
+                Toast.makeText(this, "コメントしました ", Toast.LENGTH_LONG).show()
+                send_comment.text.clear()
+                recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
+
+            }
+            .addOnFailureListener {exception ->
+                Log.e("Exception", "Could not add comment $exception")
+                Toast.makeText(this, "コメントに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
 
             }
 
@@ -167,98 +194,73 @@ class DetailDeskActivity : AppCompatActivity() {
 
 
 
-//            val DeskUid = toDesk?.deskuid
+
+
+
 //
-//            val ref = FirebaseDatabase.getInstance().getReference("/deskpost/$DeskUid")
+//        val data = HashMap<String, Any>()
+//        data.put(USERID, userid.toString())
+//        data.put(COMMENT, sendcomment)
+//        data.put(COMMENT_CREATED, FieldValue.serverTimestamp())
 //
-//            ref.addChildEventListener(object: ChildEventListener {
+//        if (userid != null) {
+//            FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId).
+//                collection(COMMENTS_REF)
+//                .add(data)
+//                .addOnSuccessListener {
+//                    Toast.makeText(this, "コメントしました ", Toast.LENGTH_LONG).show()
 //
-//                override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-//
-//                    val chatMessage = p0.getValue(DetailDesk::class.java) ?: return
-//
-//                    if(chatMessage != null) {
-//
-//                        adapter.add(DetailDeskItem(chatMessage))
-//                    }
-//                    recyclerview_detail_desk.adapter = adapter
+//                    send_comment.text.clear()
+//                    Log.d("DetailDeskActivity", "Finally we saved comment to Firebase Database")
 //                    recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
 //                }
-//
-//                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+//                .addOnFailureListener { exception ->
+//                    Toast.makeText(this, "コメントに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
+//                    // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+//                    Log.e(
+//                        "Exception:",
+//                        "Could not user document: ${exception.localizedMessage} "
+//                    )
 //                }
-//
-//                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-//
-//                }
-//                override fun onChildRemoved(p0: DataSnapshot) {
-//
-//                }
-//                override fun onCancelled(p0: DatabaseError) {
-//                }
-//            })
 //        }
+   }
 
 
 
 
-
-
-
-
-    private fun saveCommentToFirebaseDatabase() {
-
-        val userid = FirebaseAuth.getInstance().uid
-        val sendcomment = send_comment.text.toString()
-
-        val data = HashMap<String, Any>()
-        data.put(USERID, userid.toString())
-        data.put(COMMENT, sendcomment)
-        data.put(COMMENT_CREATED, FieldValue.serverTimestamp())
-
-        if (userid != null) {
-            FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId).
-                collection(COMMENTS_REF)
-                .add(data)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "コメントしました ", Toast.LENGTH_LONG).show()
-
-                    send_comment.text.clear()
-                    Log.d("DetailDeskActivity", "Finally we saved comment to Firebase Database")
-                    recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
-                }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(this, "コメントに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
-                    // Log.d("RegisterActivity", "Failed to create user: ${it.message}")
-                    Log.e(
-                        "Exception:",
-                        "Could not user document: ${exception.localizedMessage} "
-                    )
-                }
-        }
-    }
 }
 
 
 class DetailDeskItem(val detaildesk: Comment): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
-        viewHolder.itemView.detail_desk_comment_textview.text = detaildesk.comment
-       // viewHolder.itemView.detail_desl_comment_username.text = detaildesk.username
-        //Picasso.get().load(detaildesk.profileImageUrl).into(viewHolder.itemView.user_imageview_detail_desk_comment)
+        viewHolder.itemView.detail_desk_sendComment_textview.text = detaildesk.comment
+
+        val desktourCollectionRef = FirebaseFirestore.getInstance().collection(USER_REF)
+            .document(detaildesk.uid)
+
+        desktourCollectionRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
+
+                    val username = document.data?.get("username")
+                    val profileImageUrl = document.data?.get("profileImageUrl")
+
+                    viewHolder.itemView.detail_desl_comment_username.text = username.toString()
+                    Picasso.get().load(profileImageUrl.toString()).into(viewHolder.itemView.user_imageview_detail_desk_comment)
+
+                } else {
+                    Log.d(ContentValues.TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(ContentValues.TAG, "get failed with ", exception)
+            }
 
     }
 
     override fun getLayout(): Int {
         return R.layout.detail_desk_comment
     }
-}
-
-class DetailDesk(
-    val uid: String,
-    val deskdetailcommnt: String,
-    val username: String,
-    val profileImageUrl: String
-) {
-    constructor() : this("", "", "", "")
 }
