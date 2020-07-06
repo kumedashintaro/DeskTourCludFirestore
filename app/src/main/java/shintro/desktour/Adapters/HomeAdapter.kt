@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.desk_view.view.*
+import kotlinx.android.synthetic.main.detail_desk_comment.view.*
 import shintaro.desktour_cluod_firestore.DESKTOUR_REF
 import shintaro.desktour_cluod_firestore.DeskTourDate
 import shintaro.desktour_cluod_firestore.NUM_LIKES
@@ -53,7 +55,8 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val itemClick: (DeskTou
             itemView.setOnClickListener { itemClick(deskTourDate) }
             numComments?.text = deskTourDate.NumComments.toString()
 
-//            Picasso.get().load(deskTourDate.deskImageUri).into(R.id.desk_image)
+            Picasso.get().load(deskTourDate.deskImageUri).into(itemView.desk_image)
+
 
             val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
             val dateString = dateFormatter.format(deskTourDate.timestamp)

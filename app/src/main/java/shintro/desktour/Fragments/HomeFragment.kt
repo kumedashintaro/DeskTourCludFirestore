@@ -15,7 +15,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.home_fragment.*
 import shintro.desktour.Adapters.HomeAdapter
 
