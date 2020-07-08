@@ -5,18 +5,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_detail_desk.*
 import kotlinx.android.synthetic.main.derail_desk_user.*
-import kotlinx.android.synthetic.main.detail_desk_comment.view.*
 import kotlinx.android.synthetic.main.detail_desk_image_comment.*
+import shintro.desktour.Adapters.CommentsAdapter
 import shintro.desktour.Model.Comment
 import java.util.HashMap
 
@@ -28,12 +28,18 @@ class DetailDeskActivity : AppCompatActivity() {
     val comments = arrayListOf<Comment>()
     lateinit var desktourListener: ListenerRegistration
 
+    lateinit var commentsAdapter: CommentsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_desk)
 
-        recyclerview_detail_desk.adapter = adapter
         deskTourDocumentId = intent.getStringExtra(DOCUMENT_KEY)
+
+        commentsAdapter = CommentsAdapter(comments)
+        recyclerview_detail_desk.adapter = commentsAdapter
+        val layoutManager = LinearLayoutManager(this)
+        recyclerview_detail_desk.layoutManager = layoutManager
 
         profileset()
         commentset()
@@ -124,19 +130,14 @@ class DetailDeskActivity : AppCompatActivity() {
                         val userUid = data[USERID] as String
                         val documentId = document.id
 
-                        val newComments = Comment(
-                            comment,
-                            commentCreated.toDate(),
-                            userUid,
-                            documentId
-                        )
-                        adapter.add(DetailDeskItem(newComments))
-                    }
-                }
+                        val newComments = Comment(comment, commentCreated.toDate(), userUid, documentId)
+                        comments.add(newComments)
 
-                recyclerview_detail_desk.adapter = adapter
-                //recyclerview_detail_desk.scrollToPosition(adapter.itemCount - 1)
-              //  val chatMessage = getValue(DetailDesk::class.java) ?: return
+                    }
+
+                    commentsAdapter.notifyDataSetChanged()
+                }
+                recyclerview_detail_desk.scrollToPosition(adapter.itemCount - 1)
             }
 
     private fun saveCommentToFirebaseDatabase() {
@@ -162,6 +163,7 @@ class DetailDeskActivity : AppCompatActivity() {
             transaction.set(newCommentRef, data)
         }
             .addOnSuccessListener {
+
                 Toast.makeText(this, "コメントしました ", Toast.LENGTH_LONG).show()
                 send_comment.text.clear()
                 recyclerview_detail_desk.scrollToPosition(adapter.itemCount -1)
@@ -174,35 +176,3 @@ class DetailDeskActivity : AppCompatActivity() {
    }
 }
 
-class DetailDeskItem(val detaildesk: Comment): Item<ViewHolder>(){
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-
-        viewHolder.itemView.detail_desk_sendComment_textview.text = detaildesk.comment
-
-        val desktourCollectionRef = FirebaseFirestore.getInstance().collection(USER_REF)
-            .document(detaildesk.uid)
-
-        desktourCollectionRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
-
-                    val username = document.data?.get("username")
-                    val profileImageUrl = document.data?.get("profileImageUrl")
-
-                    viewHolder.itemView.detail_desl_comment_username.text = username.toString()
-                    Picasso.get().load(profileImageUrl.toString()).into(viewHolder.itemView.user_imageview_detail_desk_comment)
-
-                } else {
-                    Log.d(ContentValues.TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(ContentValues.TAG, "get failed with ", exception)
-            }
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.detail_desk_comment
-    }
-}
