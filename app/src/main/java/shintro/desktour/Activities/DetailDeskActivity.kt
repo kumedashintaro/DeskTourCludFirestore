@@ -1,10 +1,13 @@
 package shintaro.desktour_cluod_firestore
 
 import android.content.ContentValues
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +19,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_detail_desk.*
 import kotlinx.android.synthetic.main.derail_desk_user.*
 import kotlinx.android.synthetic.main.detail_desk_image_comment.*
+import shintro.desktour.Activities.UpdateCommentActivity
 import shintro.desktour.Adapters.CommentsAdapter
 import shintro.desktour.Model.Comment
 import java.util.HashMap
@@ -174,5 +178,45 @@ class DetailDeskActivity : AppCompatActivity() {
                 Toast.makeText(this, "コメントに失敗しました、もう一度入力して下さい ", Toast.LENGTH_LONG).show()
             }
    }
+
+    override fun optionMenuClicked(comment: Comment) {
+        val builder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.options_menu,null)
+        val deleteBtn = dialogView.findViewById<Button>(R.id.optionDeleteBtn)
+        val editBtn = dialogView.findViewById<Button>(R.id.optionEditBtn)
+
+        builder.setView(dialogView)
+            .setNegativeButton("Cancel"){ _, _ ->}
+        val ad = builder.show()
+
+        deleteBtn.setOnClickListener {
+            val commentRef = FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thoughtDocumentId)
+                .collection(COMMENTS_REF).document(comment.documentId)
+            val thoughtRef = FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thoughtDocumentId)
+
+
+            FirebaseFirestore.getInstance().runTransaction { transaction ->
+
+                val thought = transaction.get(thoughtRef)
+                val numComments = thought.getLong(NUM_COMMENTS)?.minus(1)
+                transaction.update(thoughtRef, NUM_COMMENTS, numComments)
+
+                transaction.delete(commentRef)
+            }.addOnSuccessListener{
+                ad.dismiss()
+            }.addOnFailureListener{exception ->
+                Log.e("Exception", "Could not add comment ${exception.localizedMessage}")
+
+            }
+        }
+        editBtn.setOnClickListener {
+            val updateIntent = Intent(this, UpdateCommentActivity::class.java)
+            updateIntent.putExtra(THOUGHT_DOC_ID_EXTRA, thoughtDocumentId)
+            updateIntent.putExtra(COMMENT_DOC_ID_EXTRA, comment.documentId)
+            updateIntent.putExtra(COMMENT_TXT_EXTRA, comment.commentTxt)
+            ad.dismiss()
+            startActivity(updateIntent)
+        }
+    }
 }
 

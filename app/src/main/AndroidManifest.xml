@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="shintaro.desktour_cluod_firestore">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailDeskActivity"
+        <activity android:name="shintro.desktour.Activities.UpdateCommentActivity"></activity>
+        <activity
+            android:name=".DetailDeskActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            ></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".NotLoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity
