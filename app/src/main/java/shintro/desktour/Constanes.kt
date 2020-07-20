@@ -20,7 +20,6 @@ const val NUM_LIKES = "numLikes"
 const val USERID = "uid"
 const val DESKIMAGEURI = "deskImageUri"
 
-
 const val USERNAME ="username"
 const val DATE_CREATED = "dateCreated"
 const val PROFILEIMAGEURL = "profileImageUrl"

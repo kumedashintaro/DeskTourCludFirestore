@@ -47,9 +47,10 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/homeOptionsImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 app:srcCompat="@drawable/ic_more_horiz_palevioletred_32dp" />
 
         </LinearLayout>
