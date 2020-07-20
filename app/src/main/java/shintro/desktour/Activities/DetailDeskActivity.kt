@@ -21,11 +21,12 @@ import kotlinx.android.synthetic.main.derail_desk_user.*
 import kotlinx.android.synthetic.main.detail_desk_image_comment.*
 import shintro.desktour.Activities.UpdateCommentActivity
 import shintro.desktour.Adapters.CommentsAdapter
+import shintro.desktour.Interface.CommentOptionsClickListener
 import shintro.desktour.Model.Comment
 import java.util.HashMap
 
 
-class DetailDeskActivity : AppCompatActivity() {
+class DetailDeskActivity : AppCompatActivity() , CommentOptionsClickListener {
 
     val adapter = GroupAdapter<ViewHolder>()
     lateinit var deskTourDocumentId : String
@@ -40,7 +41,7 @@ class DetailDeskActivity : AppCompatActivity() {
 
         deskTourDocumentId = intent.getStringExtra(DOCUMENT_KEY)
 
-        commentsAdapter = CommentsAdapter(comments)
+        commentsAdapter = CommentsAdapter(comments,this)
         recyclerview_detail_desk.adapter = commentsAdapter
         val layoutManager = LinearLayoutManager(this)
         recyclerview_detail_desk.layoutManager = layoutManager
@@ -190,16 +191,16 @@ class DetailDeskActivity : AppCompatActivity() {
         val ad = builder.show()
 
         deleteBtn.setOnClickListener {
-            val commentRef = FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thoughtDocumentId)
+            val commentRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId)
                 .collection(COMMENTS_REF).document(comment.documentId)
-            val thoughtRef = FirebaseFirestore.getInstance().collection(THOUGHTS_REF).document(thoughtDocumentId)
+            val deskTourRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF).document(deskTourDocumentId)
 
 
             FirebaseFirestore.getInstance().runTransaction { transaction ->
 
-                val thought = transaction.get(thoughtRef)
+                val thought = transaction.get(deskTourRef)
                 val numComments = thought.getLong(NUM_COMMENTS)?.minus(1)
-                transaction.update(thoughtRef, NUM_COMMENTS, numComments)
+                transaction.update(deskTourRef, NUM_COMMENTS, numComments)
 
                 transaction.delete(commentRef)
             }.addOnSuccessListener{
@@ -211,9 +212,9 @@ class DetailDeskActivity : AppCompatActivity() {
         }
         editBtn.setOnClickListener {
             val updateIntent = Intent(this, UpdateCommentActivity::class.java)
-            updateIntent.putExtra(THOUGHT_DOC_ID_EXTRA, thoughtDocumentId)
+            updateIntent.putExtra(DESKTOUR_DOC_ID_EXTRA, deskTourDocumentId)
             updateIntent.putExtra(COMMENT_DOC_ID_EXTRA, comment.documentId)
-            updateIntent.putExtra(COMMENT_TXT_EXTRA, comment.commentTxt)
+            updateIntent.putExtra(COMMENT_TXT_EXTRA, comment.comment)
             ad.dismiss()
             startActivity(updateIntent)
         }

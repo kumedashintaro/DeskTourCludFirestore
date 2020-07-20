@@ -51,10 +51,11 @@
         app:layout_constraintTop_toTopOf="@+id/detail_desl_comment_username" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/commentOptionsImages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="true"
         app:layout_constraintStart_toEndOf="@+id/detail_desl_comment_timestamp"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_more_horiz_palevioletred_32dp" />

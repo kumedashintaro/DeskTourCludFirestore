@@ -5,11 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.detail_desk_comment.view.*
+import shintaro.desktour_cluod_firestore.DetailDeskActivity
 import shintaro.desktour_cluod_firestore.R
 import shintaro.desktour_cluod_firestore.USER_REF
 import shintro.desktour.Model.Comment
@@ -17,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CommentsAdapter(val comments: ArrayList<Comment>): RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
+class CommentsAdapter(val comments: ArrayList<Comment>, val commentOptionsListener: DetailDeskActivity): RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
@@ -37,11 +40,12 @@ class CommentsAdapter(val comments: ArrayList<Comment>): RecyclerView.Adapter<Co
 
         val timestamp = itemView?.findViewById<TextView>(R.id.detail_desl_comment_timestamp)
         val commentTxt = itemView?.findViewById<TextView>(R.id.detail_desk_sendComment_textview)
-
+        val optionsImage = itemView?.findViewById<ImageView>(R.id.commentOptionsImages)
 
         fun bindComment(comment: Comment) {
             commentTxt?.text = comment.comment
 
+            optionsImage?.visibility = View.INVISIBLE
             val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
             val dateString = dateFormatter.format(comment.commentCreated)
             timestamp?.text = dateString
@@ -67,6 +71,15 @@ class CommentsAdapter(val comments: ArrayList<Comment>): RecyclerView.Adapter<Co
                 .addOnFailureListener { exception ->
                     Log.d(ContentValues.TAG, "get failed with ", exception)
                 }
+
+            if(FirebaseAuth.getInstance().currentUser?.uid == comment.uid){
+                optionsImage?.visibility = View.VISIBLE
+                optionsImage?.setOnClickListener {
+                    commentOptionsListener.optionMenuClicked(comment)
+                }
+
+            }
+
         }
     }
 }

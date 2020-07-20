@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_color_rosybrown"
+        android:onClick="updateCommentClicked"
         android:text="update"
         android:textColor="@android:color/background_light"
         app:layout_constraintEnd_toEndOf="parent"
