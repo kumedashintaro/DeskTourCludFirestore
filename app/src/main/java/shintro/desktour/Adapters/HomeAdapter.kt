@@ -50,6 +50,7 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val homeOptionsListener
         val homeoptionsImage = itemView?.findViewById<ImageView>(R.id.homeOptionsImage)
 
         fun bindThought(deskTourDate: DeskTourDate) {
+            homeoptionsImage?.visibility = View.INVISIBLE
 
             title?.text = deskTourDate.title
             comment?.text = deskTourDate.comment
