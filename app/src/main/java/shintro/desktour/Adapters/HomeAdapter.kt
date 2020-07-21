@@ -61,7 +61,7 @@ class HomeAdapter(val deskTour: ArrayList<DeskTourDate>, val homeOptionsListener
             Picasso.get().load(deskTourDate.deskImageUri).into(itemView.desk_image)
 
 
-            val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
+            val dateFormatter = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
             val dateString = dateFormatter.format(deskTourDate.timestamp)
             timestamp?.text = dateString
 

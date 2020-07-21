@@ -124,19 +124,16 @@ class HomeFragment : Fragment(), HomeOptionsClickListener {
         val ad = builder?.show()
 
         deleteBtn.setOnClickListener {
-            val thoughtRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
+            val deskTourRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
                 .document(deskTourDate.documentId)
             val collectionRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
-                .document(deskTourDate.documentId)
-                .collection(COMMENTS_REF)
+                .document(deskTourDate.documentId).collection(COMMENTS_REF)
 
             deleteCollection(collectionRef, deskTourDate) { success ->
                 if (success) {
-                    thoughtRef.delete()
+                    deskTourRef.delete()
                         .addOnSuccessListener {
-                            if (ad != null) {
-                                ad.dismiss()
-                            }
+                            ad?.dismiss()
                         }
                         .addOnFailureListener { exception ->
                             Log.e("Exception", "Could not delete though: $exception")

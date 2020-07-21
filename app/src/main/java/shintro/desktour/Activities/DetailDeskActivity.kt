@@ -62,22 +62,31 @@ class DetailDeskActivity : AppCompatActivity() , CommentOptionsClickListener {
 
     private fun profileset() {
 
-        val userid = FirebaseAuth.getInstance().uid
-        val desktourCollectionRef = FirebaseFirestore.getInstance().collection(USER_REF)
-            .document(userid.toString()
-            )
-
-        desktourCollectionRef.get()
+        val userRef = FirebaseFirestore.getInstance().collection(DESKTOUR_REF)
+            .document(deskTourDocumentId)
+        userRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
-                    val username = document.data?.get("username")
-                    val profileImageUrl = document.data?.get("profileImageUrl")
+                    val uid = document.data?.get("uid")
 
-                    detail_desk_username.text = username.toString()
-                    Picasso.get().load(profileImageUrl.toString()).into(user_imageview_detail_desk)
-                } else {
-                    Log.d(ContentValues.TAG, "No such document")
+                    val desktourCollectionRef = FirebaseFirestore.getInstance().collection(USER_REF)
+                        .document(uid.toString())
+
+                    desktourCollectionRef.get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+
+                                Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
+                                val username = document.data?.get("username")
+                                val profileImageUrl = document.data?.get("profileImageUrl")
+
+                                detail_desk_username.text = username.toString()
+                                Picasso.get().load(profileImageUrl.toString())
+                                    .into(user_imageview_detail_desk)
+                            } else {
+                                Log.d(ContentValues.TAG, "No such document")
+                            }
+                        }
                 }
             }
     }

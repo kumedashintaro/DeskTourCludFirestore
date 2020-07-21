@@ -46,7 +46,7 @@ class CommentsAdapter(val comments: ArrayList<Comment>, val commentOptionsListen
             commentTxt?.text = comment.comment
 
             optionsImage?.visibility = View.INVISIBLE
-            val dateFormatter = SimpleDateFormat("MM d, h:mm a", Locale.getDefault())
+            val dateFormatter = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
             val dateString = dateFormatter.format(comment.commentCreated)
             timestamp?.text = dateString
 
